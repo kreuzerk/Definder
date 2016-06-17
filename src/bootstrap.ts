@@ -1,6 +1,11 @@
-import {bootstrap} from '@angular/platform-browser-dynamic';
-import {provide} from '@angular/core';
-import {HTTP_PROVIDERS} from '@angular/http';
+import {bootstrap} from 'angular2/platform/browser';
+import {provide} from 'angular2/core';
+import {HTTP_PROVIDERS} from 'angular2/http';
+
+// include for development builds
+import {ELEMENT_PROBE_PROVIDERS} from 'angular2/platform/common_dom';
+// include for production builds
+// import {enableProdMode} from 'angular2/core';
 
 import {App} from './app/app';
 
@@ -9,6 +14,7 @@ import {App} from './app/app';
 export function main() {
 	return bootstrap(App, [
 		HTTP_PROVIDERS,
+		ELEMENT_PROBE_PROVIDERS // remove in production
 	])
 	.catch(err => console.error(err));
 }
