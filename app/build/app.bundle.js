@@ -46,7 +46,7 @@ webpackJsonp([0],{
 	    App = __decorate([
 	        core_1.Component({
 	            selector: 'app',
-	            template: "\n\t<div class=\"jumbotron\">\n\t\t<h1>Definder</h1>\n\t</div>\n\t<div>\n\t\t<definition-list></definition-list>\n\t</div>\n\t",
+	            template: "\n\t<div class=\"jumbotron\">\n\t\t<h1>Definder</h1>\n\t</div>\n\t<div class=\"container-fluid\">\n\t\t<definition-list></definition-list>\n\t</div>\n\t",
 	            directives: [definition_list_component_1.DefinitionListComponent]
 	        }), 
 	        __metadata('design:paramtypes', [])
