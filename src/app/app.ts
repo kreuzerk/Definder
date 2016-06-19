@@ -7,7 +7,7 @@ import {DefinitionListComponent} from "./components/definition-list/definition.l
 	<div class="jumbotron">
 		<h1>Definder</h1>
 	</div>
-	<div>
+	<div class="container-fluid">
 		<definition-list></definition-list>
 	</div>
 	`,

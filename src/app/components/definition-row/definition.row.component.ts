@@ -1,4 +1,4 @@
-import {Component, OnInit, EventEmitter, Output} from 'angular2/core';
+import {Component, OnInit, EventEmitter, Output, ViewChild, ElementRef, AfterViewInit, Renderer} from 'angular2/core';
 import {Response} from 'angular2/http';
 import {DefinitionPanelComponent} from "../definition-panel/definition.panel.component";
 import {DictionaryService} from "../../service/dictionary.service";
@@ -9,7 +9,7 @@ import 'rxjs/add/operator/map';
   selector: 'definition-row',
   template: `
       <div class="col-lg-4">
-        <input #inputField class="form-control" type="text" (keydown)="proccesKeyStroke($event, inputField)"/>
+        <input #inputField class="form-control" type="text" (keydown)="proccesKeyStroke($event)"/>
       </div>
       <div class="col-lg-8">
         <definition-panel [title]="inputField.value" [definitions]="definitions | async"></definition-panel>
@@ -18,18 +18,26 @@ import 'rxjs/add/operator/map';
   directives: [DefinitionPanelComponent],
   providers: [DictionaryService]
 })
-export class DefinitionRowComponent{
+export class DefinitionRowComponent implements AfterViewInit{
 
   private TAB_KEYCODE: number = 9;
   @Output() onTabKey = new EventEmitter<boolean>();
   definitions: Observable<Response>;
+  @ViewChild('inputField') inputField: ElementRef;
 
-  constructor(private _dictionaryService: DictionaryService){}
+  constructor(private _dictionaryService: DictionaryService, private _renderer: Renderer){
+  }
 
-  proccesKeyStroke(event, inputField: HTMLInputElement){
+  ngAfterViewInit(){
+    this.inputField.nativeElement.focus();
+    //this._renderer.invokeElementMethod(this.inputField.nativeElement, 'focus');
+    console.log("hier");
+  }
+
+  proccesKeyStroke(event){
     if(this._isTabKey(event.keyCode)){
       this.onTabKey.emit(true);
-      this.definitions = this._getDefinition(inputField.value);
+      this.definitions = this._getDefinition(this.inputField.nativeElement.value);
     }
   }
 

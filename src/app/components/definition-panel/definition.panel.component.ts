@@ -12,7 +12,6 @@ import {Component, Input} from 'angular2/core';
         <li *ngFor="#definition of definitions">
           <b>{{definition.headword}}</b>
           {{definition.senses[0].definition}}
-
         </li>
       </ul>
     </div>
