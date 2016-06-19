@@ -1,17 +1,17 @@
-import {BackendDisplayComponent} from "./components/backend.display.component";
 import {Component} from 'angular2/core';
+import {DefinitionListComponent} from "./components/definition-list/definition.list.component";
 
 @Component({
 	selector: 'app',
 	template: `
 	<div class="jumbotron">
-		<h1>Electron Angular2 starter</h1>
+		<h1>Definder</h1>
 	</div>
 	<div>
-		<backend-display></backend-display>
+		<definition-list></definition-list>
 	</div>
 	`,
-	directives: [BackendDisplayComponent]
+	directives: [DefinitionListComponent]
 })
 export class App {
 }

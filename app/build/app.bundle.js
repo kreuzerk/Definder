@@ -4,22 +4,28 @@ webpackJsonp([0],{
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var platform_browser_dynamic_1 = __webpack_require__(1);
-	var http_1 = __webpack_require__(280);
-	var app_1 = __webpack_require__(301);
+	var browser_1 = __webpack_require__(1);
+	var http_1 = __webpack_require__(234);
+	// include for development builds
+	var common_dom_1 = __webpack_require__(164);
+	// include for production builds
+	// import {enableProdMode} from 'angular2/core';
+	var app_1 = __webpack_require__(249);
 	// enableProdMode() // include for production builds
-	//export function main() {
-	//return
-	platform_browser_dynamic_1.bootstrap(app_1.App, [
-	    http_1.HTTP_PROVIDERS,
-	]);
-	//}
-	//document.addEventListener('DOMContentLoaded', main);
+	function main() {
+	    return browser_1.bootstrap(app_1.App, [
+	        http_1.HTTP_PROVIDERS,
+	        common_dom_1.ELEMENT_PROBE_PROVIDERS // remove in production
+	    ])
+	        .catch(function (err) { return console.error(err); });
+	}
+	exports.main = main;
+	document.addEventListener('DOMContentLoaded', main);
 
 
 /***/ },
 
-/***/ 301:
+/***/ 249:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -32,8 +38,8 @@ webpackJsonp([0],{
 	var __metadata = (this && this.__metadata) || function (k, v) {
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
-	var backend_display_component_1 = __webpack_require__(302);
-	var core_1 = __webpack_require__(7);
+	var backend_display_component_1 = __webpack_require__(250);
+	var core_1 = __webpack_require__(25);
 	var App = (function () {
 	    function App() {
 	    }
@@ -52,7 +58,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 302:
+/***/ 250:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -65,17 +71,21 @@ webpackJsonp([0],{
 	var __metadata = (this && this.__metadata) || function (k, v) {
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
-	var core_1 = __webpack_require__(7);
-	var dictionary_service_1 = __webpack_require__(303);
+	var core_1 = __webpack_require__(25);
+	var dictionary_service_1 = __webpack_require__(251);
+	__webpack_require__(252);
 	var BackendDisplayComponent = (function () {
 	    function BackendDisplayComponent(_dictionaryService) {
 	        this._dictionaryService = _dictionaryService;
-	        this.wordDefinition = this._dictionaryService.getDataFromServer();
+	        this._dictionaryService.getDataFromServer().
+	            subscribe(function (data) {
+	            console.log(data.json());
+	        });
 	    }
 	    BackendDisplayComponent = __decorate([
 	        core_1.Component({
 	            selector: 'backend-display',
-	            template: "\n    <h2>Preview BackendCall</h2>\n    <pre>\n      {{ wordDefinition }}\n    </pre>\n  ",
+	            template: "\n    <h2>Preview BackendCall</h2>\n  ",
 	            providers: [dictionary_service_1.DictionaryService]
 	        }), 
 	        __metadata('design:paramtypes', [dictionary_service_1.DictionaryService])
@@ -87,7 +97,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 303:
+/***/ 251:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -100,14 +110,14 @@ webpackJsonp([0],{
 	var __metadata = (this && this.__metadata) || function (k, v) {
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
-	var core_1 = __webpack_require__(7);
-	var http_1 = __webpack_require__(280);
+	var core_1 = __webpack_require__(25);
+	var http_1 = __webpack_require__(234);
 	var DictionaryService = (function () {
-	    function DictionaryService(http) {
-	        this.http = http;
+	    function DictionaryService(_http) {
+	        this._http = _http;
 	    }
 	    DictionaryService.prototype.getDataFromServer = function () {
-	        return this.http.get('http://worldcup.sfg.io/teams/results');
+	        return this._http.get('http://api.pearson.com/v2/dictionaries/wordwise/entries?headword=house');
 	    };
 	    DictionaryService = __decorate([
 	        core_1.Injectable(), 
@@ -117,6 +127,81 @@ webpackJsonp([0],{
 	}());
 	exports.DictionaryService = DictionaryService;
 
+
+/***/ },
+
+/***/ 252:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var Observable_1 = __webpack_require__(45);
+	var map_1 = __webpack_require__(253);
+	Observable_1.Observable.prototype.map = map_1.map;
+	//# sourceMappingURL=map.js.map
+
+/***/ },
+
+/***/ 253:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var Subscriber_1 = __webpack_require__(50);
+	/**
+	 * Similar to the well known `Array.prototype.map` function, this operator
+	 * applies a projection to each value and emits that projection in the returned observable
+	 *
+	 * <img src="./img/map.png" width="100%">
+	 *
+	 * @param {Function} project the function to create projection
+	 * @param {any} [thisArg] an optional argument to define what `this` is in the project function
+	 * @returns {Observable} a observable of projected values
+	 */
+	function map(project, thisArg) {
+	    if (typeof project !== 'function') {
+	        throw new TypeError('argument is not a function. Are you looking for `mapTo()`?');
+	    }
+	    return this.lift(new MapOperator(project, thisArg));
+	}
+	exports.map = map;
+	var MapOperator = (function () {
+	    function MapOperator(project, thisArg) {
+	        this.project = project;
+	        this.thisArg = thisArg;
+	    }
+	    MapOperator.prototype.call = function (subscriber) {
+	        return new MapSubscriber(subscriber, this.project, this.thisArg);
+	    };
+	    return MapOperator;
+	}());
+	var MapSubscriber = (function (_super) {
+	    __extends(MapSubscriber, _super);
+	    function MapSubscriber(destination, project, thisArg) {
+	        _super.call(this, destination);
+	        this.project = project;
+	        this.count = 0;
+	        this.thisArg = thisArg || this;
+	    }
+	    // NOTE: This looks unoptimized, but it's actually purposefully NOT
+	    // using try/catch optimizations.
+	    MapSubscriber.prototype._next = function (value) {
+	        var result;
+	        try {
+	            result = this.project.call(this.thisArg, value, this.count++);
+	        }
+	        catch (err) {
+	            this.destination.error(err);
+	            return;
+	        }
+	        this.destination.next(result);
+	    };
+	    return MapSubscriber;
+	}(Subscriber_1.Subscriber));
+	//# sourceMappingURL=map.js.map
 
 /***/ }
 
