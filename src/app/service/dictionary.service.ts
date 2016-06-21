@@ -1,7 +1,7 @@
 import {Observable} from "rxjs/Observable";
 import {Injectable} from 'angular2/core';
 import {Http, Response} from 'angular2/http';
-var jsonFile = require("./sample.json");
+var jsonFile = require("../../../sample.json");
 
 
 @Injectable()
