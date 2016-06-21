@@ -242,8 +242,7 @@ webpackJsonp([0],{
 /***/ function(module, exports) {
 
 	module.exports = {
-		"team": "Real Madrid",
-		"description": "Best Club of the History"
+		"worstClub": "Barcelona"
 	};
 
 /***/ },

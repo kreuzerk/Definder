@@ -31,6 +31,23 @@ app.on('ready', function () {
 
 	newWindow();
 
+	var path = app.getAppPath() + '/sample.json';
+	var superDirectory = path.replace('app\/', '');
+	var objectToWrite = {
+		"worstClub": "Barcelona"
+	}
+
+	console.log(superDirectory);
+
+
+	try {
+    fs.writeFileSync(superDirectory, JSON.stringify(objectToWrite ), 'utf-8');
+    console.log('Saved settings!');
+  } catch (err) {
+    throw err;
+  }
+
+
 	//Authentication Part
 	//==============================================================================
 	// Your GitHub Applications Credentials
