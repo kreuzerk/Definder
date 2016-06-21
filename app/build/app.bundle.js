@@ -114,7 +114,7 @@ webpackJsonp([0],{
 	var core_1 = __webpack_require__(25);
 	var definition_panel_component_1 = __webpack_require__(252);
 	var dictionary_service_1 = __webpack_require__(253);
-	__webpack_require__(254);
+	__webpack_require__(255);
 	var DefinitionRowComponent = (function () {
 	    function DefinitionRowComponent(_dictionaryService, _renderer) {
 	        this._dictionaryService = _dictionaryService;
@@ -217,9 +217,11 @@ webpackJsonp([0],{
 	};
 	var core_1 = __webpack_require__(25);
 	var http_1 = __webpack_require__(234);
+	var jsonFile = __webpack_require__(254);
 	var DictionaryService = (function () {
 	    function DictionaryService(_http) {
 	        this._http = _http;
+	        console.log(jsonFile);
 	    }
 	    DictionaryService.prototype.getWordDefinition = function (word) {
 	        return this._http.get("http://api.pearson.com/v2/dictionaries/wordwise/entries?headword=" + word)
@@ -237,17 +239,27 @@ webpackJsonp([0],{
 /***/ },
 
 /***/ 254:
+/***/ function(module, exports) {
+
+	module.exports = {
+		"team": "Real Madrid",
+		"description": "Best Club of the History"
+	};
+
+/***/ },
+
+/***/ 255:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var Observable_1 = __webpack_require__(45);
-	var map_1 = __webpack_require__(255);
+	var map_1 = __webpack_require__(256);
 	Observable_1.Observable.prototype.map = map_1.map;
 	//# sourceMappingURL=map.js.map
 
 /***/ },
 
-/***/ 255:
+/***/ 256:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
