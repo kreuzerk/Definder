@@ -40,16 +40,22 @@ webpackJsonp([0],{
 	};
 	var core_1 = __webpack_require__(25);
 	var definition_list_component_1 = __webpack_require__(250);
+	var jsonFile = __webpack_require__(256);
+	var http_1 = __webpack_require__(234);
 	var App = (function () {
-	    function App() {
+	    function App(_http) {
+	        this._http = _http;
+	        console.log('File', console.log(jsonFile));
+	        this._http.get(jsonFile)
+	            .subscribe(function (res) { console.log('Hallo', res); });
 	    }
 	    App = __decorate([
 	        core_1.Component({
 	            selector: 'app',
-	            template: "\n\t<div class=\"jumbotron\">\n\t\t<h1>Definder</h1>\n\t</div>\n\t<div class=\"container-fluid\">\n\t\t<definition-list></definition-list>\n\t</div>\n\t",
+	            template: "\n\t<div class=\"jumbotron\">\n\t\t<h1>Definder</h1>\n\t</div>\n\t<div class=\"container-fluid\">\n\t\t<definition-list></definition-list>\n\t</div>\n\t<button class=\"btn btn-danger\" (click)=\"logJsonFile()\">Log JsonFile</button>\n\t",
 	            directives: [definition_list_component_1.DefinitionListComponent]
 	        }), 
-	        __metadata('design:paramtypes', [])
+	        __metadata('design:paramtypes', [http_1.Http])
 	    ], App);
 	    return App;
 	}());
@@ -114,7 +120,7 @@ webpackJsonp([0],{
 	var core_1 = __webpack_require__(25);
 	var definition_panel_component_1 = __webpack_require__(252);
 	var dictionary_service_1 = __webpack_require__(253);
-	__webpack_require__(255);
+	__webpack_require__(254);
 	var DefinitionRowComponent = (function () {
 	    function DefinitionRowComponent(_dictionaryService, _renderer) {
 	        this._dictionaryService = _dictionaryService;
@@ -217,11 +223,9 @@ webpackJsonp([0],{
 	};
 	var core_1 = __webpack_require__(25);
 	var http_1 = __webpack_require__(234);
-	var jsonFile = __webpack_require__(254);
 	var DictionaryService = (function () {
 	    function DictionaryService(_http) {
 	        this._http = _http;
-	        console.log(jsonFile);
 	    }
 	    DictionaryService.prototype.getWordDefinition = function (word) {
 	        return this._http.get("http://api.pearson.com/v2/dictionaries/wordwise/entries?headword=" + word)
@@ -239,26 +243,17 @@ webpackJsonp([0],{
 /***/ },
 
 /***/ 254:
-/***/ function(module, exports) {
-
-	module.exports = {
-		"worstClub": "Barcelona"
-	};
-
-/***/ },
-
-/***/ 255:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var Observable_1 = __webpack_require__(45);
-	var map_1 = __webpack_require__(256);
+	var map_1 = __webpack_require__(255);
 	Observable_1.Observable.prototype.map = map_1.map;
 	//# sourceMappingURL=map.js.map
 
 /***/ },
 
-/***/ 256:
+/***/ 255:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -319,6 +314,15 @@ webpackJsonp([0],{
 	    return MapSubscriber;
 	}(Subscriber_1.Subscriber));
 	//# sourceMappingURL=map.js.map
+
+/***/ },
+
+/***/ 256:
+/***/ function(module, exports) {
+
+	module.exports = {
+		"code": "xZA3NVQyc9ZUtT9BA9N5rYvyNTMZrCMMW8jNr6e5"
+	};
 
 /***/ }
 

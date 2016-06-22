@@ -10,7 +10,7 @@ require('crash-reporter').start();
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 var mainWindow = null;
-
+var authWindow = null;
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
@@ -22,15 +22,16 @@ app.on('window-all-closed', function () {
 });
 
 app.on('activate-with-no-open-windows', function () {
-	newWindow();
+	createAuthWindow();
 });
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 app.on('ready', function () {
 
-	newWindow();
+	createAuthWindow();
 
+/*
 	var path = app.getAppPath() + '/sample.json';
 	var superDirectory = path.replace('app\/', '');
 	var objectToWrite = {
@@ -46,62 +47,15 @@ app.on('ready', function () {
   } catch (err) {
     throw err;
   }
-
+*/
 
 	//Authentication Part
 	//==============================================================================
 	// Your GitHub Applications Credentials
-	var options = {
-			response_type: 'code',
-	    client_id: 'pQEAmQ33wN',
-	    client_secret: 'y2xrd9CVS3VYdHn9kTE6e2',
-			state: 'IloveCoffe',
-	    scope: 'write_set' // Scopes limit access for OAuth tokens.
-	};
 
-	// Build the OAuth consent page URL
-		var authWindow = new BrowserWindow({ width: 800, height: 600, show: false, 'node-integration': false });
-		authWindow.openDevTools();
-		var quizletUrl = 'https://quizlet.com/authorize?';
-		var authUrl = quizletUrl + 'response_type=' + options.response_type +
-		'&client_id=' + options.client_id + '&scope=' + options.scope + '&state=' + options.state;
-		authWindow.loadURL(authUrl);
-		authWindow.show();
-
-	function handleCallback (url) {
-		console.log('hier die URL', url);
-		var raw_code = /code=([^&]*)/.exec(url) || null;
-	  var code = (raw_code && raw_code.length > 1) ? raw_code[1] : null;
-	  var error = /\?error=(.+)$/.exec(url);
-
-	  if (code || error) {
-	    // Close the browser if code found or error
-	    authWindow.destroy();
-	  }
-
-	  // If there is a code, proceed to get token from github
-	  if (code) {
-			console.log('code', code);
-	    //self.requestGithubToken(options, code);
-	  } else if (error) {
-	    alert('Oops! Something went wrong and we couldn\'t' +
-	      'log you in using Github. Please try again.');
-	  }
-	}
 
 	// Handle the response from GitHub - See Update from 4/12/2015
-	authWindow.webContents.on('will-navigate', function (event, url) {
-	  handleCallback(url);
-	});
 
-	authWindow.webContents.on('did-get-redirect-request', function (event, oldUrl, newUrl) {
-	  handleCallback(newUrl);
-	});
-
-	// Reset the authWindow on close
-	authWindow.on('close', function() {
-	    authWindow = null;
-	}, false);
 
 	//==============================================================================
 
@@ -140,6 +94,93 @@ app.on('ready', function () {
 
 });
 
+function createAuthWindow(){
+	var options = {
+			response_type: 'code',
+	    client_id: 'pQEAmQ33wN',
+	    client_secret: 'y2xrd9CVS3VYdHn9kTE6e2',
+			state: 'IloveCoffe',
+	    scope: 'write_set' // Scopes limit access for OAuth tokens.
+	};
+
+	authWindow = new BrowserWindow({ width: 800, height: 600, show: false, 'node-integration': false });
+
+	if(readFile()){;
+
+	// Build the OAuth consent page URL
+		authWindow.openDevTools();
+		var quizletUrl = 'https://quizlet.com/authorize?';
+		var authUrl = quizletUrl + 'response_type=' + options.response_type +
+		'&client_id=' + options.client_id + '&scope=' + options.scope + '&state=' + options.state;
+		authWindow.loadURL(authUrl);
+		authWindow.show();
+	}
+	else{
+		newWindow();
+	}
+
+	authWindow.webContents.on('will-navigate', function (event, url) {
+		handleCallback(url);
+	});
+
+	authWindow.webContents.on('did-get-redirect-request', function (event, oldUrl, newUrl) {
+		handleCallback(newUrl);
+	});
+
+	// Reset the authWindow on close
+	authWindow.on('close', function() {
+			authWindow = null;
+	}, false);
+
+	function handleCallback (url) {
+		console.log('hier die URL', url);
+		var raw_code = /code=([^&]*)/.exec(url) || null;
+	  var code = (raw_code && raw_code.length > 1) ? raw_code[1] : null;
+	  var error = /\?error=(.+)$/.exec(url);
+
+	  if (code || error) {
+	    // Close the browser if code found or error
+	    authWindow.destroy();
+	  }
+
+	  // If there is a code, proceed to get token from github
+	  if (code) {
+			writeToFile(code);
+			newWindow();
+	  } else if (error) {
+	    alert('Oops! Something went wrong and we couldn\'t' +
+	      'log you in using Github. Please try again.');
+	  }
+	}
+
+	function readFile(){
+		var path = app.getAppPath() + '/sample.json';
+		var superDirectory = path.replace('app\/', '');
+
+		var accessKeyFromFile = fs.readFileSync(superDirectory, 'utf-8');
+		var accesCode = JSON.parse(accessKeyFromFile).code;
+
+		return accesCode === null;
+	}
+
+	function writeToFile(code){
+		var path = app.getAppPath() + '/sample.json';
+		var superDirectory = path.replace('app\/', '');
+		var objectToWrite = {
+			"code": code
+		}
+
+		console.log(superDirectory);
+
+
+		try {
+	    fs.writeFileSync(superDirectory, JSON.stringify(objectToWrite ), 'utf-8');
+	    console.log('Saved settings!');
+	  } catch (err) {
+	    throw err;
+	  }
+	}
+}
 
 function newWindow () {
 	mainWindow = new BrowserWindow({
