@@ -105,19 +105,13 @@ function createAuthWindow(){
 
 	authWindow = new BrowserWindow({ width: 800, height: 600, show: false, 'node-integration': false });
 
-	if(readFile()){;
-
 	// Build the OAuth consent page URL
-		authWindow.openDevTools();
-		var quizletUrl = 'https://quizlet.com/authorize?';
-		var authUrl = quizletUrl + 'response_type=' + options.response_type +
+	authWindow.openDevTools();
+	var quizletUrl = 'https://quizlet.com/authorize?';
+	var authUrl = quizletUrl + 'response_type=' + options.response_type +
 		'&client_id=' + options.client_id + '&scope=' + options.scope + '&state=' + options.state;
-		authWindow.loadURL(authUrl);
-		authWindow.show();
-	}
-	else{
-		newWindow();
-	}
+	authWindow.loadURL(authUrl);
+	authWindow.show();
 
 	authWindow.webContents.on('will-navigate', function (event, url) {
 		handleCallback(url);
@@ -145,8 +139,9 @@ function createAuthWindow(){
 
 	  // If there is a code, proceed to get token from github
 	  if (code) {
-			writeToFile(code);
+			//writeToFile(code);
 			newWindow();
+			console.log('Please copy this code', code);
 	  } else if (error) {
 	    alert('Oops! Something went wrong and we couldn\'t' +
 	      'log you in using Github. Please try again.');
