@@ -142,7 +142,7 @@ function createAuthWindow(){
 	  if (code) {
 			//writeToFile(code);
 			newWindow();
-			var options = { message: 'Please Copy the code below', detail: code, buttons: [] };
+			var options = { title: 'Please Copy the code below', message: code, buttons: [] };
 			electron.dialog.showMessageBox(options);
 	  } else if (error) {
 	    alert('Oops! Something went wrong and we couldn\'t' +
