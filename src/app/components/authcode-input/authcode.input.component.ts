@@ -5,18 +5,24 @@ import {FormBuilder, ControlGroup, Control, Validators} from 'angular2/common';
 @Component({
   selector: 'auth-input',
   template: `
-    <h1>Here comes the auth Input</h1>
-
     <form [ngFormModel]="authForm">
-      <label>Auth Code</label>
-      <input type="text" class="form-control" ngControl="authCode"/>
+      <input type="text" class="form-control" ngControl="authCode" placeHolder="Please past your Auth Code here"/>
       <div *ngIf="authCode.dirty && authCode.hasError('required')">
         A auth Code is required
       </div>
-      <button class="btn btn-default" (click)="getAccessToken()">Go!</button>
+      <button class="btn btn-primary" (click)="getAccessToken()">Login</button>
     </form>
   `,
-  providers: [FormBuilder]
+  providers: [FormBuilder],
+  styles: [`
+    input{
+      width: 300px;
+      display: inline;
+    }
+    form{
+      margin-top: 27px;
+    }
+    `]
 })
 export class AuthInputComponent{
 
