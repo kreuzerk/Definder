@@ -3,6 +3,7 @@ var BrowserWindow = require('browser-window');  // Module to create native brows
 var Menu = require('menu');
 var fs = require('fs');
 var shell = require('shell');
+var electron = require('electron');
 
 // Report crashes to our server.
 require('crash-reporter').start();
@@ -141,7 +142,8 @@ function createAuthWindow(){
 	  if (code) {
 			//writeToFile(code);
 			newWindow();
-			console.log('Please copy this code', code);
+			var options = { message: 'Please Copy the code below', detail: code, buttons: [] };
+			electron.dialog.showMessageBox(options);
 	  } else if (error) {
 	    alert('Oops! Something went wrong and we couldn\'t' +
 	      'log you in using Github. Please try again.');
