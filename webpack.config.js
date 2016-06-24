@@ -23,9 +23,8 @@ var webpackConfig = {
 		loaders: [
 			{ test: /\.ts$/,   loader: 'awesome-typescript-loader' },
 			{ test: /\.html$/, loader: 'html-loader' },
-			{ test: /\.scss$/,
-				loader: ExtractTextPlugin.extract('style-loader', 'css-loader?sourceMap!sass-loader?sourceMap')
-			},
+			{ test: /\.scss$/, loader: ExtractTextPlugin.extract('style-loader', 'css-loader?sourceMap!sass-loader?sourceMap')},
+			{ test: /\.json$/, loader: 'json' }
 		]
 	},
 
@@ -68,7 +67,7 @@ var defaultConfig = {
 
 	resolve: {
 		root: [ path.join(__dirname, 'src') ],
-		extensions: ['', '.ts', '.js']
+		extensions: ['', '.ts', '.js', '.json']
 	},
 
 	devServer: {

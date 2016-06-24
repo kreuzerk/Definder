@@ -8,12 +8,14 @@ import {ELEMENT_PROBE_PROVIDERS} from 'angular2/platform/common_dom';
 // import {enableProdMode} from 'angular2/core';
 
 import {App} from './app/app';
+import {AuthService} from './app/service/auth.service';
 
 // enableProdMode() // include for production builds
 
 export function main() {
 	return bootstrap(App, [
 		HTTP_PROVIDERS,
+		AuthService,
 		ELEMENT_PROBE_PROVIDERS // remove in production
 	])
 	.catch(err => console.error(err));
