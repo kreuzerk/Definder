@@ -111,16 +111,13 @@ webpackJsonp([0],{
 	var core_1 = __webpack_require__(25);
 	var WelcomeUserComponent = (function () {
 	    function WelcomeUserComponent() {
-	        this.image = './build/' + __webpack_require__(252);
+	        this.image = __webpack_require__(252);
 	        console.log('Ich logge', this.image);
 	    }
 	    WelcomeUserComponent = __decorate([
 	        core_1.Component({
 	            selector: 'welcome-user',
-	            template: "\n    <h2>Willkommen</h2>\n    <img [src]=\"image\"/>\n  ",
-	            styles: [
-	                "\n    h2{\n      display: inline;\n    }\n    "
-	            ]
+	            template: "\n    <h2>Willkommen</h2>\n    <img [src]=\"image\"/>\n  "
 	        }), 
 	        __metadata('design:paramtypes', [])
 	    ], WelcomeUserComponent);

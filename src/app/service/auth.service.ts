@@ -41,7 +41,7 @@ export class AuthService{
     let title = 'My first set through the api';
 
     this._http.post('https://api.quizlet.com/2.0/sets?' + 'whitespace=1&title=' + title +
-    '&terms[]=milch&definitions[]=milk&terms[]=milk&definitions[]=milch&lang_terms=de&lang_definitions=en',
+    '&terms[]=milch&definitions[]=milk,wert&terms[]=milk&definitions[]=milch&lang_terms=de&lang_definitions=en',
       '', {headers: headers}
     )
     .subscribe(response => console.log(response));
