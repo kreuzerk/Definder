@@ -12,18 +12,39 @@ export class AuthService{
     client_sectet: 'y2xrd9CVS3VYdHn9kTE6e2'
   }
   private basicAuth = 'Basic cFFFQW1RMzN3Tjp5MnhyZDlDVlMzVllkSG45a1RFNmUy';
-  private headers = new Headers();
+  private accessToken: string;
 
   constructor(private _http: Http){
+
   }
 
   getAccessToken(authCode: string){
     console.log('I am calling');
-     this.headers.append('Content-Type', 'application/x-www-form-urlencoded');
-     this.headers.append('Authorization', this.basicAuth);
+     let headers = new Headers();
+     headers.append('Content-Type', 'application/x-www-form-urlencoded');
+     headers.append('Authorization', this.basicAuth);
 
     this._http.post(this.baseURL + '?grant_type=' + this.options.grant_type + '&code=' + authCode,
-          '', {headers: this.headers})
-          .subscribe(result => console.log('Es klappt', result));
+          '', {headers: headers})
+          .map(res => res.json())
+          .subscribe(result => {
+            this.accessToken = result.access_token
+            this._makeTestCall();
+          });
+  }
+
+  private _makeTestCall(){
+
+    console.log('I make the call with the token', this.accessToken);
+    let headers = new Headers();
+    headers.append('Authorization', 'Bearer ' + this.accessToken);
+    let title = 'My first set through the api';
+
+    this._http.post('https://api.quizlet.com/2.0/sets?' + 'whitespace=1&title=' + title +
+    '&terms[]=milch&definitions[]=milk&terms[]=milk&definitions[]=milch&lang_terms=de&lang_definitions=en',
+      '', {headers: headers}
+    )
+    .subscribe(response => console.log(response));
+
   }
 }

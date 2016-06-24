@@ -11,7 +11,7 @@ webpackJsonp([0],{
 	// include for production builds
 	// import {enableProdMode} from 'angular2/core';
 	var app_1 = __webpack_require__(249);
-	var auth_service_1 = __webpack_require__(251);
+	var auth_service_1 = __webpack_require__(252);
 	// enableProdMode() // include for production builds
 	function main() {
 	    return browser_1.bootstrap(app_1.App, [
@@ -40,17 +40,17 @@ webpackJsonp([0],{
 	var __metadata = (this && this.__metadata) || function (k, v) {
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
-	var authcode_input_component_1 = __webpack_require__(250);
+	var navbar_component_1 = __webpack_require__(250);
 	var core_1 = __webpack_require__(25);
-	var definition_list_component_1 = __webpack_require__(252);
+	var definition_list_component_1 = __webpack_require__(253);
 	var App = (function () {
 	    function App() {
 	    }
 	    App = __decorate([
 	        core_1.Component({
 	            selector: 'app',
-	            template: "\n\t<div class=\"jumbotron\">\n\t\t<h1>Definder</h1>\n\t</div>\n\t<div class=\"container-fluid\">\n\t\t<div class=\"row\">\n\t\t\t<auth-input></auth-input>\n\t\t</div>\n\t\t<div class=\"row\">\n\t\t\t<definition-list></definition-list>\n\t\t</div>\n\t</div>\n\t<button class=\"btn btn-danger\" (click)=\"logJsonFile()\">Log JsonFile</button>\n\t",
-	            directives: [definition_list_component_1.DefinitionListComponent, authcode_input_component_1.AuthInputComponent]
+	            template: "\n\t<div>\n\t\t<navbar-cmp></navbar-cmp>\n\t</div>\n\t<div class=\"container-fluid\">\n\t\t\t<definition-list></definition-list>\n\t</div>\n\t<button class=\"btn btn-danger\" (click)=\"logJsonFile()\">Log JsonFile</button>\n\t",
+	            directives: [definition_list_component_1.DefinitionListComponent, navbar_component_1.NavbarComponent]
 	        }), 
 	        __metadata('design:paramtypes', [])
 	    ], App);
@@ -74,7 +74,40 @@ webpackJsonp([0],{
 	var __metadata = (this && this.__metadata) || function (k, v) {
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
-	var auth_service_1 = __webpack_require__(251);
+	var authcode_input_component_1 = __webpack_require__(251);
+	var core_1 = __webpack_require__(25);
+	var NavbarComponent = (function () {
+	    function NavbarComponent() {
+	    }
+	    NavbarComponent = __decorate([
+	        core_1.Component({
+	            selector: 'navbar-cmp',
+	            template: "\n    <nav class=\"navbar navbar-default\">\n      <div class=\"container-fluid\">\n        <div class=\"navbar-header\">\n          <h2 class=\"navbar-brand\">\n            Definder\n          </h2>\n        </div>\n        <auth-input class=\"pull-right\"></auth-input>\n      </div>\n    </nav>\n  ",
+	            directives: [authcode_input_component_1.AuthInputComponent]
+	        }), 
+	        __metadata('design:paramtypes', [])
+	    ], NavbarComponent);
+	    return NavbarComponent;
+	}());
+	exports.NavbarComponent = NavbarComponent;
+
+
+/***/ },
+
+/***/ 251:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var auth_service_1 = __webpack_require__(252);
 	var core_1 = __webpack_require__(25);
 	var common_1 = __webpack_require__(92);
 	var AuthInputComponent = (function () {
@@ -92,8 +125,9 @@ webpackJsonp([0],{
 	    AuthInputComponent = __decorate([
 	        core_1.Component({
 	            selector: 'auth-input',
-	            template: "\n    <h1>Here comes the auth Input</h1>\n\n    <form [ngFormModel]=\"authForm\">\n      <label>Auth Code</label>\n      <input type=\"text\" class=\"form-control\" ngControl=\"authCode\"/>\n      <div *ngIf=\"authCode.dirty && authCode.hasError('required')\">\n        A auth Code is required\n      </div>\n      <button class=\"btn btn-default\" (click)=\"getAccessToken()\">Go!</button>\n    </form>\n  ",
-	            providers: [common_1.FormBuilder]
+	            template: "\n    <form [ngFormModel]=\"authForm\">\n      <input type=\"text\" class=\"form-control\" ngControl=\"authCode\" placeHolder=\"Please past your Auth Code here\"/>\n      <div *ngIf=\"authCode.dirty && authCode.hasError('required')\">\n        A auth Code is required\n      </div>\n      <button class=\"btn btn-primary\" (click)=\"getAccessToken()\">Login</button>\n    </form>\n  ",
+	            providers: [common_1.FormBuilder],
+	            styles: ["\n    input{\n      width: 300px;\n      display: inline;\n    }\n    form{\n      margin-top: 27px;\n    }\n    "]
 	        }), 
 	        __metadata('design:paramtypes', [common_1.FormBuilder, auth_service_1.AuthService])
 	    ], AuthInputComponent);
@@ -104,7 +138,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 251:
+/***/ 252:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -130,14 +164,28 @@ webpackJsonp([0],{
 	            client_sectet: 'y2xrd9CVS3VYdHn9kTE6e2'
 	        };
 	        this.basicAuth = 'Basic cFFFQW1RMzN3Tjp5MnhyZDlDVlMzVllkSG45a1RFNmUy';
-	        this.headers = new http_1.Headers();
 	    }
 	    AuthService.prototype.getAccessToken = function (authCode) {
+	        var _this = this;
 	        console.log('I am calling');
-	        this.headers.append('Content-Type', 'application/x-www-form-urlencoded');
-	        this.headers.append('Authorization', this.basicAuth);
-	        this._http.post(this.baseURL + '?grant_type=' + this.options.grant_type + '&code=' + authCode, '', { headers: this.headers })
-	            .subscribe(function (result) { return console.log('Es klappt', result); });
+	        var headers = new http_1.Headers();
+	        headers.append('Content-Type', 'application/x-www-form-urlencoded');
+	        headers.append('Authorization', this.basicAuth);
+	        this._http.post(this.baseURL + '?grant_type=' + this.options.grant_type + '&code=' + authCode, '', { headers: headers })
+	            .map(function (res) { return res.json(); })
+	            .subscribe(function (result) {
+	            _this.accessToken = result.access_token;
+	            _this._makeTestCall();
+	        });
+	    };
+	    AuthService.prototype._makeTestCall = function () {
+	        console.log('I make the call with the token', this.accessToken);
+	        var headers = new http_1.Headers();
+	        headers.append('Authorization', 'Bearer ' + this.accessToken);
+	        var title = 'My first set through the api';
+	        this._http.post('https://api.quizlet.com/2.0/sets?' + 'whitespace=1&title=' + title +
+	            '&terms[]=milch&definitions[]=milk&terms[]=milk&definitions[]=milch&lang_terms=de&lang_definitions=en', '', { headers: headers })
+	            .subscribe(function (response) { return console.log(response); });
 	    };
 	    AuthService = __decorate([
 	        core_1.Injectable(), 
@@ -150,7 +198,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 252:
+/***/ 253:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -164,7 +212,7 @@ webpackJsonp([0],{
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var core_1 = __webpack_require__(25);
-	var definition_row_component_1 = __webpack_require__(253);
+	var definition_row_component_1 = __webpack_require__(254);
 	var DefinitionListComponent = (function () {
 	    function DefinitionListComponent() {
 	        this.definitons = [];
@@ -190,7 +238,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 253:
+/***/ 254:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -204,9 +252,9 @@ webpackJsonp([0],{
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var core_1 = __webpack_require__(25);
-	var definition_panel_component_1 = __webpack_require__(254);
-	var dictionary_service_1 = __webpack_require__(255);
-	__webpack_require__(256);
+	var definition_panel_component_1 = __webpack_require__(255);
+	var dictionary_service_1 = __webpack_require__(256);
+	__webpack_require__(257);
 	var DefinitionRowComponent = (function () {
 	    function DefinitionRowComponent(_dictionaryService, _renderer) {
 	        this._dictionaryService = _dictionaryService;
@@ -255,7 +303,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 254:
+/***/ 255:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -294,7 +342,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 255:
+/***/ 256:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -328,18 +376,18 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 256:
+/***/ 257:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var Observable_1 = __webpack_require__(45);
-	var map_1 = __webpack_require__(257);
+	var map_1 = __webpack_require__(258);
 	Observable_1.Observable.prototype.map = map_1.map;
 	//# sourceMappingURL=map.js.map
 
 /***/ },
 
-/***/ 257:
+/***/ 258:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
