@@ -1,9 +1,15 @@
-import {Component, OnInit, EventEmitter, Output, ViewChild, ElementRef, AfterViewInit, Renderer} from '@angular/core';
+import {Store} from "@ngrx/store";
 import {Response} from '@angular/http';
-import {DefinitionPanelComponent} from "../definition-panel/definition.panel.component";
-import {DictionaryService} from "../../service/dictionary.service";
+import {Component, OnInit, EventEmitter, Output, ViewChild, ElementRef, AfterViewInit, Renderer} from '@angular/core';
 import {Observable} from "rxjs/Observable";
 import 'rxjs/add/operator/map';
+
+import {StoreActions} from "../../actions/store.actions";
+import {QuizletStore} from "../../model/quizletstore.model";
+import {Quizletterm} from "../../model/quizletterm.model";
+import {DefinitionPanelComponent} from "../definition-panel/definition.panel.component";
+import {DictionaryService} from "../../service/dictionary.service";
+
 
 @Component({
   selector: 'definition-row',
@@ -25,19 +31,31 @@ export class DefinitionRowComponent implements AfterViewInit{
   definitions: Observable<Response>;
   @ViewChild('inputField') inputField: ElementRef;
 
-  constructor(private _dictionaryService: DictionaryService, private _renderer: Renderer){
+  constructor(private _dictionaryService: DictionaryService, private _renderer: Renderer,
+    private _store: Store<QuizletStore>){
   }
 
   ngAfterViewInit(){
     this.inputField.nativeElement.focus();
     //this._renderer.invokeElementMethod(this.inputField.nativeElement, 'focus');
-    console.log("hier");
   }
 
   proccesKeyStroke(event){
     if(this._isTabKey(event.keyCode)){
       this.onTabKey.emit(true);
       this.definitions = this._getDefinition(this.inputField.nativeElement.value);
+      this.definitions.subscribe((res) => {
+        let definitions = res.map(response => response.senses)
+          .map(senses => senses[0].definition);
+        let payload: Quizletterm = {
+          word: this.inputField.nativeElement.value,
+          definitions: definitions
+        }
+
+        this._store.dispatch({type: StoreActions.ADD_QUIZLETTERM.toString(), payload})
+        //TODO kk: Add to the store
+
+      });
     }
   }
 
