@@ -4,7 +4,7 @@ import {HTTP_PROVIDERS, Request, XSRFStrategy} from '@angular/http';
 import {provideStore} from '@ngrx/store';
 
 import {App} from './app/app';
-import {AuthService} from './app/service/auth.service';
+import {QuizletService} from './app/service/quizlet.service';
 import {quizletterm} from './app/reducers/quizletterm.reducer';;
 
 import 'core-js/es6';
@@ -24,7 +24,7 @@ export function main() {
 	return bootstrap(App, [
 		HTTP_PROVIDERS,
 		XRSF_MOCK,
-		AuthService,
+		QuizletService,
 		provideStore({quizletterm})
 	])
 	.catch(err => console.error(err));

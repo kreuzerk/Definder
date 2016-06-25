@@ -1,4 +1,4 @@
-import {AuthService} from "../../service/auth.service";
+import {QuizletService} from "../../service/quizlet.service";
 import {Component} from '@angular/core';
 import {FormBuilder, ControlGroup, Control, Validators} from '@angular/common';
 
@@ -29,7 +29,7 @@ export class AuthInputComponent{
   authForm: ControlGroup;
   authCode: Control;
 
-  constructor(private _fb: FormBuilder, private _authService: AuthService){
+  constructor(private _fb: FormBuilder, private _quizletService: QuizletService){
     this.authCode = _fb.control('', Validators.required);
     this.authForm = _fb.group({
       authCode: this.authCode
@@ -37,7 +37,7 @@ export class AuthInputComponent{
   }
 
   getAccessToken(): void{
-    this._authService.getAccessToken(this.authCode.value);
+    this._quizletService.getAccessToken(this.authCode.value);
   }
 
 }
