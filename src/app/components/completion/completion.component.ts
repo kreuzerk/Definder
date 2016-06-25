@@ -1,6 +1,8 @@
 import {Component} from '@angular/core';
 import {FormBuilder, ControlGroup, Control, Validators} from '@angular/common';
 
+import {QuizletService} from "../../service/quizlet.service";
+
 @Component({
   selector: 'completion-cmp',
   template: `
@@ -31,7 +33,7 @@ export class CompletionComponent{
   completionForm: ControlGroup;
   setName: Control;
 
-  constructor(private _fb: FormBuilder){
+  constructor(private _fb: FormBuilder, private _quizletService: QuizletService){
     this.setName = _fb.control('', Validators.required);
     this.completionForm = this._fb.group({
       setName: this.setName
@@ -39,6 +41,6 @@ export class CompletionComponent{
   }
 
   createSet(): void{
-    console.log('I am going to create a set');
+    this._quizletService.createSet(this.setName.value);
   }
 }

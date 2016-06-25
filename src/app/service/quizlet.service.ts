@@ -1,8 +1,12 @@
+import {Store} from "@ngrx/store";
 import {Injectable} from '@angular/core';
 import {Http, Headers} from '@angular/http';
 
+import {Quizletterm} from "../model/quizletTerm.model";
+import {QuizletStore} from "../model/quizletstore.model";
+
 @Injectable()
-export class AuthService{
+export class QuizletService{
 
   private baseURL = 'https://api.quizlet.com/oauth/token';
   private options = {
@@ -13,9 +17,13 @@ export class AuthService{
   }
   private basicAuth = 'Basic cFFFQW1RMzN3Tjp5MnhyZDlDVlMzVllkSG45a1RFNmUy';
   private accessToken: string;
+  private quizletterms: Array<Quizletterm>;
 
-  constructor(private _http: Http){
-
+  constructor(private _http: Http, private _store: Store<QuizletStore>){
+    this._store.select('quizletterm').
+      subscribe((quizletterms: Array<Quizletterm>) => {
+        this.quizletterms = quizletterms;
+      })
   }
 
   getAccessToken(authCode: string){
@@ -46,5 +54,34 @@ export class AuthService{
     )
     .subscribe(response => console.log(response));
 
+  }
+
+  createSet(title: string): void {
+    console.log('Im Service, lets go');
+    let headers = new Headers();
+    headers.append('Authorization', 'Bearer ' + this.accessToken);
+    let termsAndDefinitions: string = this._getTermsAndDefinitions();
+    this._http.post('https://api.quizlet.com/2.0/sets?' + 'whitespace=1&title=' + title +
+    termsAndDefinitions + '&lang_terms=de&lang_definitions=en',
+      '', {headers: headers}
+    )
+    .subscribe(response => console.log(response));
+  }
+
+  private _getTermsAndDefinitions(): string {
+    let result = '';
+    this.quizletterms.forEach((term: Quizletterm) => {
+      result += '&terms[]=' + term.word;
+      result += this._extractDefinitions(term.definitions).replace(',', '');
+    })
+    return result;
+  }
+
+  private _extractDefinitions(definitions: Array<string>): string {
+    let result = '&definitions[]=';
+    definitions.forEach((definition) => {
+      result += ',' + definition ;
+    });
+    return result;
   }
 }

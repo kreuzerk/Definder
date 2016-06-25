@@ -1,4 +1,4 @@
 export interface Quizletterm {
   word: string,
-  definitions: Array<String>
+  definitions: Array<string>
 }

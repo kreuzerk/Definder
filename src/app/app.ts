@@ -4,7 +4,6 @@ import {Store} from "@ngrx/store";
 
 import {QuizletStore} from "./model/quizletstore.model";
 import {NavbarComponent} from "./components/navbar/navbar.component";
-import {AuthService} from "./service/auth.service";
 import {DefinitionListComponent} from "./components/definition-list/definition.list.component";
 
 @Component({
