@@ -1,5 +1,5 @@
-import {Component, OnInit, EventEmitter, Output, ViewChild, ElementRef, AfterViewInit, Renderer} from 'angular2/core';
-import {Response} from 'angular2/http';
+import {Component, OnInit, EventEmitter, Output, ViewChild, ElementRef, AfterViewInit, Renderer} from '@angular/core';
+import {Response} from '@angular/http';
 import {DefinitionPanelComponent} from "../definition-panel/definition.panel.component";
 import {DictionaryService} from "../../service/dictionary.service";
 import {Observable} from "rxjs/Observable";

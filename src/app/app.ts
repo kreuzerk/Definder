@@ -1,6 +1,6 @@
 import {NavbarComponent} from "./components/navbar/navbar.component";
 import {AuthService} from "./service/auth.service";
-import {Component} from 'angular2/core';
+import {Component} from '@angular/core';
 import {DefinitionListComponent} from "./components/definition-list/definition.list.component";
 
 @Component({

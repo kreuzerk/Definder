@@ -1,6 +1,6 @@
 import {WelcomeUserComponent} from "../welcome-user/welcome.user.component";
 import {AuthInputComponent} from "../authcode-input/authcode.input.component";
-import {Component} from 'angular2/core';
+import {Component} from '@angular/core';
 
 @Component({
   selector: 'navbar-cmp',

@@ -1,22 +1,31 @@
-import {bootstrap} from 'angular2/platform/browser';
-import {provide} from 'angular2/core';
-import {HTTP_PROVIDERS} from 'angular2/http';
-
-// include for development builds
-import {ELEMENT_PROBE_PROVIDERS} from 'angular2/platform/common_dom';
-// include for production builds
-// import {enableProdMode} from 'angular2/core';
+import {bootstrap} from '@angular/platform-browser-dynamic';
+import {provide, ReflectiveInjector} from '@angular/core';
+import {HTTP_PROVIDERS, Request, XSRFStrategy} from '@angular/http';
+import {provideStore} from '@ngrx/store';
 
 import {App} from './app/app';
 import {AuthService} from './app/service/auth.service';
+import {quizletterm} from './app/reducers/quizletterm.reducer';;
 
-// enableProdMode() // include for production builds
+import 'core-js/es6';
+import 'core-js/es7/reflect';
+
+// Angular2 Dependencies
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/mergeMap';
+
+class FakeXSRFStrategy implements XSRFStrategy {
+  public configureRequest(req: Request) { /* */ }
+}
+
+const XRSF_MOCK = provide(XSRFStrategy, { useValue: new FakeXSRFStrategy() })
 
 export function main() {
 	return bootstrap(App, [
 		HTTP_PROVIDERS,
+		XRSF_MOCK,
 		AuthService,
-		ELEMENT_PROBE_PROVIDERS // remove in production
+		provideStore({quizletterm})
 	])
 	.catch(err => console.error(err));
 }
