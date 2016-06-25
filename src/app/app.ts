@@ -1,6 +1,9 @@
+import {Component} from '@angular/core';
+import {Store} from "@ngrx/store";
+
+import {QuizletStore} from "./model/quizletstore.model";
 import {NavbarComponent} from "./components/navbar/navbar.component";
 import {AuthService} from "./service/auth.service";
-import {Component} from 'angular2/core';
 import {DefinitionListComponent} from "./components/definition-list/definition.list.component";
 
 @Component({
@@ -11,12 +14,18 @@ import {DefinitionListComponent} from "./components/definition-list/definition.l
 	</div>
 	<div class="container-fluid">
 			<definition-list></definition-list>
+			<button class="btn btn-danger" (click)="logStore()">Log Store</button>
 	</div>
-	<button class="btn btn-danger" (click)="logJsonFile()">Log JsonFile</button>
 	`,
 	directives: [DefinitionListComponent, NavbarComponent]
 })
 export class App {
 
-	constructor(){}
+	constructor(private _store: Store<QuizletStore>){}
+
+	logStore(): void{
+		this._store.select('quizletterm')
+			.subscribe((quizletterms) => { console.log(quizletterms) });
+	}
+
 }

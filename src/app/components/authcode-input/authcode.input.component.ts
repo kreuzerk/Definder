@@ -1,6 +1,6 @@
 import {AuthService} from "../../service/auth.service";
-import {Component} from 'angular2/core';
-import {FormBuilder, ControlGroup, Control, Validators} from 'angular2/common';
+import {Component} from '@angular/core';
+import {FormBuilder, ControlGroup, Control, Validators} from '@angular/common';
 
 @Component({
   selector: 'auth-input',
