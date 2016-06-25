@@ -1,3 +1,4 @@
+import {CompletionComponent} from "./components/completion/completion.component";
 import {Component} from '@angular/core';
 import {Store} from "@ngrx/store";
 
@@ -14,10 +15,10 @@ import {DefinitionListComponent} from "./components/definition-list/definition.l
 	</div>
 	<div class="container-fluid">
 			<definition-list></definition-list>
-			<button class="btn btn-danger" (click)="logStore()">Log Store</button>
+			<completion-cmp></completion-cmp>
 	</div>
 	`,
-	directives: [DefinitionListComponent, NavbarComponent]
+	directives: [DefinitionListComponent, NavbarComponent, CompletionComponent]
 })
 export class App {
 
