@@ -10,13 +10,13 @@ webpackJsonp([0],{
 	var store_1 = __webpack_require__(301);
 	var app_1 = __webpack_require__(324);
 	var auth_service_1 = __webpack_require__(329);
-	var quizletterm_reducer_1 = __webpack_require__(334);
+	var quizletterm_reducer_1 = __webpack_require__(335);
 	;
-	__webpack_require__(335);
-	__webpack_require__(581);
+	__webpack_require__(336);
+	__webpack_require__(582);
 	// Angular2 Dependencies
 	__webpack_require__(305);
-	__webpack_require__(593);
+	__webpack_require__(594);
 	var FakeXSRFStrategy = (function () {
 	    function FakeXSRFStrategy() {
 	    }
@@ -1249,19 +1249,25 @@ webpackJsonp([0],{
 	var __metadata = (this && this.__metadata) || function (k, v) {
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
-	var navbar_component_1 = __webpack_require__(325);
 	var core_1 = __webpack_require__(7);
+	var store_1 = __webpack_require__(301);
+	var navbar_component_1 = __webpack_require__(325);
 	var definition_list_component_1 = __webpack_require__(330);
 	var App = (function () {
-	    function App() {
+	    function App(_store) {
+	        this._store = _store;
 	    }
+	    App.prototype.logStore = function () {
+	        this._store.select('quizletterm')
+	            .subscribe(function (quizletterms) { console.log(quizletterms); });
+	    };
 	    App = __decorate([
 	        core_1.Component({
 	            selector: 'app',
-	            template: "\n\t<div>\n\t\t<navbar-cmp></navbar-cmp>\n\t</div>\n\t<div class=\"container-fluid\">\n\t\t\t<definition-list></definition-list>\n\t</div>\n\t<button class=\"btn btn-danger\" (click)=\"logJsonFile()\">Log JsonFile</button>\n\t",
+	            template: "\n\t<div>\n\t\t<navbar-cmp></navbar-cmp>\n\t</div>\n\t<div class=\"container-fluid\">\n\t\t\t<definition-list></definition-list>\n\t\t\t<button class=\"btn btn-danger\" (click)=\"logStore()\">Log Store</button>\n\t</div>\n\t",
 	            directives: [definition_list_component_1.DefinitionListComponent, navbar_component_1.NavbarComponent]
 	        }), 
-	        __metadata('design:paramtypes', [])
+	        __metadata('design:paramtypes', [store_1.Store])
 	    ], App);
 	    return App;
 	}());
@@ -1504,26 +1510,39 @@ webpackJsonp([0],{
 	var __metadata = (this && this.__metadata) || function (k, v) {
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
+	var store_1 = __webpack_require__(301);
 	var core_1 = __webpack_require__(7);
-	var definition_panel_component_1 = __webpack_require__(332);
-	var dictionary_service_1 = __webpack_require__(333);
 	__webpack_require__(305);
+	var store_actions_1 = __webpack_require__(332);
+	var definition_panel_component_1 = __webpack_require__(333);
+	var dictionary_service_1 = __webpack_require__(334);
 	var DefinitionRowComponent = (function () {
-	    function DefinitionRowComponent(_dictionaryService, _renderer) {
+	    function DefinitionRowComponent(_dictionaryService, _renderer, _store) {
 	        this._dictionaryService = _dictionaryService;
 	        this._renderer = _renderer;
+	        this._store = _store;
 	        this.TAB_KEYCODE = 9;
 	        this.onTabKey = new core_1.EventEmitter();
 	    }
 	    DefinitionRowComponent.prototype.ngAfterViewInit = function () {
 	        this.inputField.nativeElement.focus();
 	        //this._renderer.invokeElementMethod(this.inputField.nativeElement, 'focus');
-	        console.log("hier");
 	    };
 	    DefinitionRowComponent.prototype.proccesKeyStroke = function (event) {
+	        var _this = this;
 	        if (this._isTabKey(event.keyCode)) {
 	            this.onTabKey.emit(true);
 	            this.definitions = this._getDefinition(this.inputField.nativeElement.value);
+	            this.definitions.subscribe(function (res) {
+	                var definitions = res.map(function (response) { return response.senses; })
+	                    .map(function (senses) { return senses[0].definition; });
+	                var payload = {
+	                    word: _this.inputField.nativeElement.value,
+	                    definitions: definitions
+	                };
+	                _this._store.dispatch({ type: store_actions_1.StoreActions.ADD_QUIZLETTERM.toString(), payload: payload });
+	                //TODO kk: Add to the store
+	            });
 	        }
 	    };
 	    DefinitionRowComponent.prototype._getDefinition = function (word) {
@@ -1547,7 +1566,7 @@ webpackJsonp([0],{
 	            directives: [definition_panel_component_1.DefinitionPanelComponent],
 	            providers: [dictionary_service_1.DictionaryService]
 	        }), 
-	        __metadata('design:paramtypes', [dictionary_service_1.DictionaryService, core_1.Renderer])
+	        __metadata('design:paramtypes', [dictionary_service_1.DictionaryService, core_1.Renderer, store_1.Store])
 	    ], DefinitionRowComponent);
 	    return DefinitionRowComponent;
 	}());
@@ -1557,6 +1576,18 @@ webpackJsonp([0],{
 /***/ },
 
 /***/ 332:
+/***/ function(module, exports) {
+
+	"use strict";
+	(function (StoreActions) {
+	    StoreActions[StoreActions["ADD_QUIZLETTERM"] = 0] = "ADD_QUIZLETTERM";
+	})(exports.StoreActions || (exports.StoreActions = {}));
+	var StoreActions = exports.StoreActions;
+
+
+/***/ },
+
+/***/ 333:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1595,7 +1626,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 333:
+/***/ 334:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1629,15 +1660,16 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 334:
-/***/ function(module, exports) {
+/***/ 335:
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+	var store_actions_1 = __webpack_require__(332);
 	exports.quizletterm = function (state, _a) {
 	    if (state === void 0) { state = []; }
 	    var type = _a.type, payload = _a.payload;
 	    switch (type) {
-	        case 'ADD_QUIZLETTERM':
+	        case store_actions_1.StoreActions.ADD_QUIZLETTERM.toString():
 	            return state.concat([payload]);
 	        default:
 	            return state;
@@ -1647,16 +1679,15 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 335:
+/***/ 336:
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(336);
-	__webpack_require__(385);
+	__webpack_require__(337);
 	__webpack_require__(386);
 	__webpack_require__(387);
 	__webpack_require__(388);
-	__webpack_require__(390);
-	__webpack_require__(393);
+	__webpack_require__(389);
+	__webpack_require__(391);
 	__webpack_require__(394);
 	__webpack_require__(395);
 	__webpack_require__(396);
@@ -1665,34 +1696,34 @@ webpackJsonp([0],{
 	__webpack_require__(399);
 	__webpack_require__(400);
 	__webpack_require__(401);
-	__webpack_require__(403);
-	__webpack_require__(405);
-	__webpack_require__(407);
-	__webpack_require__(409);
-	__webpack_require__(412);
+	__webpack_require__(402);
+	__webpack_require__(404);
+	__webpack_require__(406);
+	__webpack_require__(408);
+	__webpack_require__(410);
 	__webpack_require__(413);
 	__webpack_require__(414);
-	__webpack_require__(418);
-	__webpack_require__(420);
-	__webpack_require__(422);
-	__webpack_require__(426);
+	__webpack_require__(415);
+	__webpack_require__(419);
+	__webpack_require__(421);
+	__webpack_require__(423);
 	__webpack_require__(427);
 	__webpack_require__(428);
 	__webpack_require__(429);
-	__webpack_require__(431);
+	__webpack_require__(430);
 	__webpack_require__(432);
 	__webpack_require__(433);
 	__webpack_require__(434);
 	__webpack_require__(435);
 	__webpack_require__(436);
 	__webpack_require__(437);
-	__webpack_require__(439);
+	__webpack_require__(438);
 	__webpack_require__(440);
 	__webpack_require__(441);
-	__webpack_require__(443);
+	__webpack_require__(442);
 	__webpack_require__(444);
 	__webpack_require__(445);
-	__webpack_require__(447);
+	__webpack_require__(446);
 	__webpack_require__(448);
 	__webpack_require__(449);
 	__webpack_require__(450);
@@ -1706,13 +1737,13 @@ webpackJsonp([0],{
 	__webpack_require__(458);
 	__webpack_require__(459);
 	__webpack_require__(460);
-	__webpack_require__(465);
+	__webpack_require__(461);
 	__webpack_require__(466);
-	__webpack_require__(470);
+	__webpack_require__(467);
 	__webpack_require__(471);
 	__webpack_require__(472);
 	__webpack_require__(473);
-	__webpack_require__(475);
+	__webpack_require__(474);
 	__webpack_require__(476);
 	__webpack_require__(477);
 	__webpack_require__(478);
@@ -1729,43 +1760,43 @@ webpackJsonp([0],{
 	__webpack_require__(489);
 	__webpack_require__(490);
 	__webpack_require__(491);
-	__webpack_require__(493);
+	__webpack_require__(492);
 	__webpack_require__(494);
-	__webpack_require__(500);
+	__webpack_require__(495);
 	__webpack_require__(501);
-	__webpack_require__(503);
+	__webpack_require__(502);
 	__webpack_require__(504);
 	__webpack_require__(505);
-	__webpack_require__(509);
+	__webpack_require__(506);
 	__webpack_require__(510);
 	__webpack_require__(511);
 	__webpack_require__(512);
 	__webpack_require__(513);
-	__webpack_require__(515);
+	__webpack_require__(514);
 	__webpack_require__(516);
 	__webpack_require__(517);
 	__webpack_require__(518);
-	__webpack_require__(521);
-	__webpack_require__(523);
+	__webpack_require__(519);
+	__webpack_require__(522);
 	__webpack_require__(524);
 	__webpack_require__(525);
-	__webpack_require__(527);
-	__webpack_require__(529);
-	__webpack_require__(531);
+	__webpack_require__(526);
+	__webpack_require__(528);
+	__webpack_require__(530);
 	__webpack_require__(532);
 	__webpack_require__(533);
-	__webpack_require__(535);
+	__webpack_require__(534);
 	__webpack_require__(536);
 	__webpack_require__(537);
 	__webpack_require__(538);
-	__webpack_require__(544);
-	__webpack_require__(547);
+	__webpack_require__(539);
+	__webpack_require__(545);
 	__webpack_require__(548);
-	__webpack_require__(550);
+	__webpack_require__(549);
 	__webpack_require__(551);
-	__webpack_require__(554);
+	__webpack_require__(552);
 	__webpack_require__(555);
-	__webpack_require__(558);
+	__webpack_require__(556);
 	__webpack_require__(559);
 	__webpack_require__(560);
 	__webpack_require__(561);
@@ -1784,43 +1815,44 @@ webpackJsonp([0],{
 	__webpack_require__(574);
 	__webpack_require__(575);
 	__webpack_require__(576);
-	__webpack_require__(578);
+	__webpack_require__(577);
 	__webpack_require__(579);
 	__webpack_require__(580);
-	module.exports = __webpack_require__(342);
+	__webpack_require__(581);
+	module.exports = __webpack_require__(343);
 
 /***/ },
 
-/***/ 581:
+/***/ 582:
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(582);
-	__webpack_require__(584);
+	__webpack_require__(583);
 	__webpack_require__(585);
 	__webpack_require__(586);
-	__webpack_require__(588);
+	__webpack_require__(587);
 	__webpack_require__(589);
 	__webpack_require__(590);
 	__webpack_require__(591);
 	__webpack_require__(592);
-	module.exports = __webpack_require__(342).Reflect;
+	__webpack_require__(593);
+	module.exports = __webpack_require__(343).Reflect;
 
 
 /***/ },
 
-/***/ 593:
+/***/ 594:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var Observable_1 = __webpack_require__(41);
-	var mergeMap_1 = __webpack_require__(594);
+	var mergeMap_1 = __webpack_require__(595);
 	Observable_1.Observable.prototype.mergeMap = mergeMap_1.mergeMap;
 	Observable_1.Observable.prototype.flatMap = mergeMap_1.mergeMap;
 	//# sourceMappingURL=mergeMap.js.map
 
 /***/ },
 
-/***/ 594:
+/***/ 595:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1829,8 +1861,8 @@ webpackJsonp([0],{
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
-	var subscribeToResult_1 = __webpack_require__(595);
-	var OuterSubscriber_1 = __webpack_require__(599);
+	var subscribeToResult_1 = __webpack_require__(596);
+	var OuterSubscriber_1 = __webpack_require__(600);
 	/**
 	 * Projects each source value to an Observable which is merged in the output
 	 * Observable.
@@ -1987,16 +2019,16 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 595:
+/***/ 596:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var root_1 = __webpack_require__(42);
 	var isArray_1 = __webpack_require__(48);
-	var isPromise_1 = __webpack_require__(596);
+	var isPromise_1 = __webpack_require__(597);
 	var Observable_1 = __webpack_require__(41);
-	var iterator_1 = __webpack_require__(597);
-	var InnerSubscriber_1 = __webpack_require__(598);
+	var iterator_1 = __webpack_require__(598);
+	var InnerSubscriber_1 = __webpack_require__(599);
 	var $$observable = __webpack_require__(55);
 	function subscribeToResult(outerSubscriber, result, outerValue, outerIndex) {
 	    var destination = new InnerSubscriber_1.InnerSubscriber(outerSubscriber, outerValue, outerIndex);
@@ -2064,7 +2096,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 596:
+/***/ 597:
 /***/ function(module, exports) {
 
 	"use strict";
@@ -2076,7 +2108,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 597:
+/***/ 598:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2114,7 +2146,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 598:
+/***/ 599:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2156,7 +2188,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 599:
+/***/ 600:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";

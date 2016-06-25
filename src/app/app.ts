@@ -14,8 +14,8 @@ import {DefinitionListComponent} from "./components/definition-list/definition.l
 	</div>
 	<div class="container-fluid">
 			<definition-list></definition-list>
+			<button class="btn btn-danger" (click)="logStore()">Log Store</button>
 	</div>
-	<button class="btn btn-danger" (click)="logStore()">Log Store</button>
 	`,
 	directives: [DefinitionListComponent, NavbarComponent]
 })
