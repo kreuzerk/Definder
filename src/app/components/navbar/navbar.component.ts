@@ -1,3 +1,4 @@
+import {WelcomeUserComponent} from "../welcome-user/welcome.user.component";
 import {AuthInputComponent} from "../authcode-input/authcode.input.component";
 import {Component} from 'angular2/core';
 
@@ -12,9 +13,10 @@ import {Component} from 'angular2/core';
           </h2>
         </div>
         <auth-input class="pull-right"></auth-input>
+        <welcome-user class="pull-right"></welcome-user>
       </div>
     </nav>
   `,
-  directives: [AuthInputComponent]
+  directives: [AuthInputComponent, WelcomeUserComponent]
 })
 export class NavbarComponent{}

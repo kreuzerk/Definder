@@ -24,7 +24,11 @@ var webpackConfig = {
 			{ test: /\.ts$/,   loader: 'awesome-typescript-loader' },
 			{ test: /\.html$/, loader: 'html-loader' },
 			{ test: /\.scss$/, loader: ExtractTextPlugin.extract('style-loader', 'css-loader?sourceMap!sass-loader?sourceMap')},
-			{ test: /\.json$/, loader: 'json' }
+			{ test: /\.json$/, loader: 'json' },
+			{ test: /\.(jpe?g|png|gif|svg)$/i, loader: 'file-loader'},
+			{ test: /\.(woff|woff2)$/, loader: 'url-loader?limit=10000&mimetype=application/font-woff'},
+			{ test: /\.ttf$/, loader: 'file-loader'},
+			{ test: /\.eot$/, loader: 'file-loader'}
 		]
 	},
 
@@ -67,7 +71,7 @@ var defaultConfig = {
 
 	resolve: {
 		root: [ path.join(__dirname, 'src') ],
-		extensions: ['', '.ts', '.js', '.json']
+		extensions: ['', '.ts', '.js', '.json', '.png']
 	},
 
 	devServer: {
