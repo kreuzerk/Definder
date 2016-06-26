@@ -1,3 +1,4 @@
+import {QuizletService} from "./service/quizlet.service";
 import {CompletionComponent} from "./components/completion/completion.component";
 import {Component} from '@angular/core';
 import {Store} from "@ngrx/store";
@@ -12,7 +13,7 @@ import {DefinitionListComponent} from "./components/definition-list/definition.l
 	<div>
 		<navbar-cmp></navbar-cmp>
 	</div>
-	<div class="container-fluid">
+	<div *ngIf="quizletService.accessToken" class="container-fluid">
 			<definition-list></definition-list>
 			<completion-cmp></completion-cmp>
 	</div>
@@ -21,7 +22,7 @@ import {DefinitionListComponent} from "./components/definition-list/definition.l
 })
 export class App {
 
-	constructor(private _store: Store<QuizletStore>){}
+	constructor(private _store: Store<QuizletStore>, public quizletService: QuizletService){}
 
 	logStore(): void{
 		this._store.select('quizletterm')
