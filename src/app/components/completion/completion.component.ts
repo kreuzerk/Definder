@@ -15,7 +15,14 @@ import {QuizletService} from "../../service/quizlet.service";
       <div *ngIf="setName.dirty && setName.hasError('required')">
         A auth Code is required
       </div>
+      <div *ngIf="showSuccessMessage" class="alert alert-success" role="alert">
+        New Set "{{setName.value}}" successfully added to Quizlet
+      </div>
+      <div *ngIf="showFailureMessage" class="alert alert-danger" role="alert">
+        Ouupsi!! An error occured. {{errorMessage}}
+      </div>
     </form>
+    <button class="btn btn-default" (click)="toggleSuccessMessage()">Toggle</button>
   `,
   providers: [FormBuilder],
   styles: [`
@@ -26,12 +33,19 @@ import {QuizletService} from "../../service/quizlet.service";
     div{
       color: red;
     }
+    .alert{
+      width: 475px;
+      margin-top: 20px;
+    }
     `]
 })
 export class CompletionComponent{
 
   completionForm: ControlGroup;
   setName: Control;
+  showSuccessMessage: boolean = false;
+  showFailureMessage: boolean = false;
+  errorMessage: string = '';
 
   constructor(private _fb: FormBuilder, private _quizletService: QuizletService){
     this.setName = _fb.control('', Validators.required);
@@ -41,6 +55,36 @@ export class CompletionComponent{
   }
 
   createSet(): void{
-    this._quizletService.createSet(this.setName.value);
+    this._quizletService.createSet(this.setName.value)
+      .subscribe(response => {
+        if(201 === response.status){
+          this._toggleSuccessMessage();
+        }
+      },
+      (err) => {
+        console.log('Fehlermeldung', err);
+        console.log('Body', err._body);
+        let jsonBody = JSON.parse(err._body);
+        console.log(jsonBody);
+        console.log(jsonBody.error_description);
+        this._toggleFailureMessage(jsonBody.error_description);
+      }
+    );
+  }
+
+  private _toggleSuccessMessage(): void{
+    this.showSuccessMessage = true;
+    setTimeout(() => {
+      this.showSuccessMessage = false;
+    }, 2000)
+  }
+
+  private _toggleFailureMessage(errormessage: string): void{
+    this.errorMessage += errormessage;
+    this.showFailureMessage = true;
+    setTimeout(() => {
+      this.showFailureMessage = false;
+      this.errorMessage = '';
+    }, 2000)
   }
 }
