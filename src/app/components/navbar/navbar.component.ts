@@ -1,3 +1,4 @@
+import {QuizletService} from "../../service/quizlet.service";
 import {WelcomeUserComponent} from "../welcome-user/welcome.user.component";
 import {AuthInputComponent} from "../authcode-input/authcode.input.component";
 import {Component} from '@angular/core';
@@ -15,8 +16,8 @@ import {Component} from '@angular/core';
         <img alt="Brand" [src]="image"/>
         </div>
         <div class="authAndWelcome">
-          <auth-input class="pull-right"></auth-input>
-          <welcome-user class="pull-right"></welcome-user>
+          <auth-input *ngIf="!quizletService.accessToken" class="pull-right"></auth-input>
+          <welcome-user *ngIf="quizletService.accessToken" class="pull-right"></welcome-user>
         </div>
       </div>
     </nav>
@@ -59,5 +60,7 @@ import {Component} from '@angular/core';
 export class NavbarComponent{
 
   image = './build/' + require('./app-image.png');
+
+  constructor(public quizletService: QuizletService){}
 
 }

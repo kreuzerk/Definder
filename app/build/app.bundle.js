@@ -9,14 +9,14 @@ webpackJsonp([0],{
 	var http_1 = __webpack_require__(280);
 	var store_1 = __webpack_require__(301);
 	var app_1 = __webpack_require__(324);
-	var quizlet_service_1 = __webpack_require__(326);
-	var quizletterm_reducer_1 = __webpack_require__(336);
+	var quizlet_service_1 = __webpack_require__(325);
+	var quizletterm_reducer_1 = __webpack_require__(337);
 	;
-	__webpack_require__(337);
-	__webpack_require__(583);
+	__webpack_require__(338);
+	__webpack_require__(584);
 	// Angular2 Dependencies
 	__webpack_require__(305);
-	__webpack_require__(595);
+	__webpack_require__(596);
 	var FakeXSRFStrategy = (function () {
 	    function FakeXSRFStrategy() {
 	    }
@@ -1249,14 +1249,16 @@ webpackJsonp([0],{
 	var __metadata = (this && this.__metadata) || function (k, v) {
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
-	var completion_component_1 = __webpack_require__(325);
+	var quizlet_service_1 = __webpack_require__(325);
+	var completion_component_1 = __webpack_require__(326);
 	var core_1 = __webpack_require__(7);
 	var store_1 = __webpack_require__(301);
 	var navbar_component_1 = __webpack_require__(327);
-	var definition_list_component_1 = __webpack_require__(331);
+	var definition_list_component_1 = __webpack_require__(332);
 	var App = (function () {
-	    function App(_store) {
+	    function App(_store, quizletService) {
 	        this._store = _store;
+	        this.quizletService = quizletService;
 	    }
 	    App.prototype.logStore = function () {
 	        this._store.select('quizletterm')
@@ -1265,10 +1267,10 @@ webpackJsonp([0],{
 	    App = __decorate([
 	        core_1.Component({
 	            selector: 'app',
-	            template: "\n\t<div>\n\t\t<navbar-cmp></navbar-cmp>\n\t</div>\n\t<div class=\"container-fluid\">\n\t\t\t<definition-list></definition-list>\n\t\t\t<completion-cmp></completion-cmp>\n\t</div>\n\t",
+	            template: "\n\t<div>\n\t\t<navbar-cmp></navbar-cmp>\n\t</div>\n\t<div *ngIf=\"quizletService.accessToken\" class=\"container-fluid\">\n\t\t\t<definition-list></definition-list>\n\t\t\t<completion-cmp></completion-cmp>\n\t</div>\n\t",
 	            directives: [definition_list_component_1.DefinitionListComponent, navbar_component_1.NavbarComponent, completion_component_1.CompletionComponent]
 	        }), 
-	        __metadata('design:paramtypes', [store_1.Store])
+	        __metadata('design:paramtypes', [store_1.Store, quizlet_service_1.QuizletService])
 	    ], App);
 	    return App;
 	}());
@@ -1278,82 +1280,6 @@ webpackJsonp([0],{
 /***/ },
 
 /***/ 325:
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var __metadata = (this && this.__metadata) || function (k, v) {
-	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-	};
-	var core_1 = __webpack_require__(7);
-	var common_1 = __webpack_require__(181);
-	var quizlet_service_1 = __webpack_require__(326);
-	var CompletionComponent = (function () {
-	    function CompletionComponent(_fb, _quizletService) {
-	        this._fb = _fb;
-	        this._quizletService = _quizletService;
-	        this.showSuccessMessage = false;
-	        this.showFailureMessage = false;
-	        this.errorMessage = '';
-	        this.setName = _fb.control('', common_1.Validators.required);
-	        this.completionForm = this._fb.group({
-	            setName: this.setName
-	        });
-	    }
-	    CompletionComponent.prototype.createSet = function () {
-	        var _this = this;
-	        this._quizletService.createSet(this.setName.value)
-	            .subscribe(function (response) {
-	            if (201 === response.status) {
-	                _this._toggleSuccessMessage();
-	            }
-	        }, function (err) {
-	            console.log('Fehlermeldung', err);
-	            console.log('Body', err._body);
-	            var jsonBody = JSON.parse(err._body);
-	            console.log(jsonBody);
-	            console.log(jsonBody.error_description);
-	            _this._toggleFailureMessage(jsonBody.error_description);
-	        });
-	    };
-	    CompletionComponent.prototype._toggleSuccessMessage = function () {
-	        var _this = this;
-	        this.showSuccessMessage = true;
-	        setTimeout(function () {
-	            _this.showSuccessMessage = false;
-	        }, 2000);
-	    };
-	    CompletionComponent.prototype._toggleFailureMessage = function (errormessage) {
-	        var _this = this;
-	        this.errorMessage += errormessage;
-	        this.showFailureMessage = true;
-	        setTimeout(function () {
-	            _this.showFailureMessage = false;
-	            _this.errorMessage = '';
-	        }, 2000);
-	    };
-	    CompletionComponent = __decorate([
-	        core_1.Component({
-	            selector: 'completion-cmp',
-	            template: "\n    <form [ngFormModel]=\"completionForm\" (submit)=\"createSet()\">\n      <input class=\"form-control\" ngControl=\"setName\" placeHolder=\"Name your set\">\n      <button class=\"btn btn-primary\" type=\"submit\" [disabled]=\"!completionForm.valid\">\n        <span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span>\n        Create Set on Quizlet\n      </button>\n      <div *ngIf=\"setName.dirty && setName.hasError('required')\">\n        A auth Code is required\n      </div>\n      <div *ngIf=\"showSuccessMessage\" class=\"alert alert-success\" role=\"alert\">\n        New Set \"{{setName.value}}\" successfully added to Quizlet\n      </div>\n      <div *ngIf=\"showFailureMessage\" class=\"alert alert-danger\" role=\"alert\">\n        Ouupsi!! An error occured. {{errorMessage}}\n      </div>\n    </form>\n    <button class=\"btn btn-default\" (click)=\"toggleSuccessMessage()\">Toggle</button>\n  ",
-	            providers: [common_1.FormBuilder],
-	            styles: ["\n    input{\n      width: 300px;\n      display: inline;\n    }\n    div{\n      color: red;\n    }\n    .alert{\n      width: 475px;\n      margin-top: 20px;\n    }\n    "]
-	        }), 
-	        __metadata('design:paramtypes', [common_1.FormBuilder, quizlet_service_1.QuizletService])
-	    ], CompletionComponent);
-	    return CompletionComponent;
-	}());
-	exports.CompletionComponent = CompletionComponent;
-
-
-/***/ },
-
-/***/ 326:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1444,6 +1370,82 @@ webpackJsonp([0],{
 
 /***/ },
 
+/***/ 326:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(7);
+	var common_1 = __webpack_require__(181);
+	var quizlet_service_1 = __webpack_require__(325);
+	var CompletionComponent = (function () {
+	    function CompletionComponent(_fb, _quizletService) {
+	        this._fb = _fb;
+	        this._quizletService = _quizletService;
+	        this.showSuccessMessage = false;
+	        this.showFailureMessage = false;
+	        this.errorMessage = '';
+	        this.setName = _fb.control('', common_1.Validators.required);
+	        this.completionForm = this._fb.group({
+	            setName: this.setName
+	        });
+	    }
+	    CompletionComponent.prototype.createSet = function () {
+	        var _this = this;
+	        this._quizletService.createSet(this.setName.value)
+	            .subscribe(function (response) {
+	            if (201 === response.status) {
+	                _this._toggleSuccessMessage();
+	            }
+	        }, function (err) {
+	            console.log('Fehlermeldung', err);
+	            console.log('Body', err._body);
+	            var jsonBody = JSON.parse(err._body);
+	            console.log(jsonBody);
+	            console.log(jsonBody.error_description);
+	            _this._toggleFailureMessage(jsonBody.error_description);
+	        });
+	    };
+	    CompletionComponent.prototype._toggleSuccessMessage = function () {
+	        var _this = this;
+	        this.showSuccessMessage = true;
+	        setTimeout(function () {
+	            _this.showSuccessMessage = false;
+	        }, 2000);
+	    };
+	    CompletionComponent.prototype._toggleFailureMessage = function (errormessage) {
+	        var _this = this;
+	        this.errorMessage += errormessage;
+	        this.showFailureMessage = true;
+	        setTimeout(function () {
+	            _this.showFailureMessage = false;
+	            _this.errorMessage = '';
+	        }, 2000);
+	    };
+	    CompletionComponent = __decorate([
+	        core_1.Component({
+	            selector: 'completion-cmp',
+	            template: "\n    <form [ngFormModel]=\"completionForm\" (submit)=\"createSet()\">\n      <input class=\"form-control\" ngControl=\"setName\" placeHolder=\"Name your set\">\n      <button class=\"btn btn-primary\" type=\"submit\" [disabled]=\"!completionForm.valid\">\n        <span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span>\n        Create Set on Quizlet\n      </button>\n      <div *ngIf=\"setName.dirty && setName.hasError('required')\">\n        A auth Code is required\n      </div>\n      <div *ngIf=\"showSuccessMessage\" class=\"alert alert-success\" role=\"alert\">\n        New Set \"{{setName.value}}\" successfully added to Quizlet\n      </div>\n      <div *ngIf=\"showFailureMessage\" class=\"alert alert-danger\" role=\"alert\">\n        Ouupsi!! An error occured. {{errorMessage}}\n      </div>\n    </form>\n    <button class=\"btn btn-default\" (click)=\"toggleSuccessMessage()\">Toggle</button>\n  ",
+	            providers: [common_1.FormBuilder],
+	            styles: ["\n    input{\n      width: 300px;\n      display: inline;\n    }\n    div{\n      color: red;\n    }\n    .alert{\n      width: 475px;\n      margin-top: 20px;\n    }\n    "]
+	        }), 
+	        __metadata('design:paramtypes', [common_1.FormBuilder, quizlet_service_1.QuizletService])
+	    ], CompletionComponent);
+	    return CompletionComponent;
+	}());
+	exports.CompletionComponent = CompletionComponent;
+
+
+/***/ },
+
 /***/ 327:
 /***/ function(module, exports, __webpack_require__) {
 
@@ -1457,19 +1459,23 @@ webpackJsonp([0],{
 	var __metadata = (this && this.__metadata) || function (k, v) {
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
+	var quizlet_service_1 = __webpack_require__(325);
 	var welcome_user_component_1 = __webpack_require__(328);
 	var authcode_input_component_1 = __webpack_require__(330);
 	var core_1 = __webpack_require__(7);
 	var NavbarComponent = (function () {
-	    function NavbarComponent() {
+	    function NavbarComponent(quizletService) {
+	        this.quizletService = quizletService;
+	        this.image = './build/' + __webpack_require__(331);
 	    }
 	    NavbarComponent = __decorate([
 	        core_1.Component({
 	            selector: 'navbar-cmp',
-	            template: "\n    <nav class=\"navbar navbar-default\">\n      <div class=\"container-fluid\">\n        <div class=\"navbar-header\">\n          <h2 class=\"navbar-brand\">\n            Definder\n          </h2>\n        </div>\n        <auth-input class=\"pull-right\"></auth-input>\n        <welcome-user class=\"pull-right\"></welcome-user>\n      </div>\n    </nav>\n  ",
-	            directives: [authcode_input_component_1.AuthInputComponent, welcome_user_component_1.WelcomeUserComponent]
+	            template: "\n    <nav class=\"navbar navbar-inverse\">\n      <div class=\"container-fluid\">\n        <div class=\"navbar-header\">\n        <div class=\"textContainer\">\n          <div class=\"smallHeadline\">Powered by Quizlet</div>\n          <div class=\"largeHeadLine\">Definder</div>\n        </div>\n        <img alt=\"Brand\" [src]=\"image\"/>\n        </div>\n        <div class=\"authAndWelcome\">\n          <auth-input *ngIf=\"!quizletService.accessToken\" class=\"pull-right\"></auth-input>\n          <welcome-user *ngIf=\"quizletService.accessToken\" class=\"pull-right\"></welcome-user>\n        </div>\n      </div>\n    </nav>\n  ",
+	            directives: [authcode_input_component_1.AuthInputComponent, welcome_user_component_1.WelcomeUserComponent],
+	            styles: ["\n    img{\n      max-width: 100px;\n      max-height: 100px;\n      margin-left: 20px;\n    }\n    .largeHeadLine{\n      font-family: times, Times New Roman, times-roman, georgia, serif;\n\t    color: white;\n\t    margin: 0;\n\t    padding: 0px 0px 6px 0px;\n      font-size: 51px;\n\t    line-height: 44px;\n\t    letter-spacing: -2px;\n\t    font-weight: bold;\n    }\n    .smallHeadline{\n      font-family: Gill Sans, Verdana;\n\t    font-size: 11px;\n\t    line-height: 14px;\n\t    text-transform: uppercase;\n\t    letter-spacing: 2px;\n\t    font-weight: bold;\n      color: white;\n    }\n    .textContainer{\n      margin-top: 20px;\n      display: inline-block;\n    }\n    .authAndWelcome{\n      margin-top: 10px;\n    }\n    "]
 	        }), 
-	        __metadata('design:paramtypes', [])
+	        __metadata('design:paramtypes', [quizlet_service_1.QuizletService])
 	    ], NavbarComponent);
 	    return NavbarComponent;
 	}());
@@ -1534,7 +1540,7 @@ webpackJsonp([0],{
 	var __metadata = (this && this.__metadata) || function (k, v) {
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
-	var quizlet_service_1 = __webpack_require__(326);
+	var quizlet_service_1 = __webpack_require__(325);
 	var core_1 = __webpack_require__(7);
 	var common_1 = __webpack_require__(181);
 	var AuthInputComponent = (function () {
@@ -1552,7 +1558,7 @@ webpackJsonp([0],{
 	    AuthInputComponent = __decorate([
 	        core_1.Component({
 	            selector: 'auth-input',
-	            template: "\n    <form [ngFormModel]=\"authForm\">\n      <input type=\"text\" class=\"form-control\" ngControl=\"authCode\" placeHolder=\"Please past your Auth Code here\"/>\n      <div *ngIf=\"authCode.dirty && authCode.hasError('required')\">\n        A auth Code is required\n      </div>\n      <button class=\"btn btn-primary\" (click)=\"getAccessToken()\">Login</button>\n    </form>\n  ",
+	            template: "\n    <form [ngFormModel]=\"authForm\">\n      <input type=\"text\" class=\"form-control\" ngControl=\"authCode\" placeHolder=\"Please paste your Auth Code here\"/>\n      <div *ngIf=\"authCode.dirty && authCode.hasError('required')\">\n        A auth Code is required\n      </div>\n      <button class=\"btn btn-primary\" (click)=\"getAccessToken()\">Login</button>\n    </form>\n  ",
 	            providers: [common_1.FormBuilder],
 	            styles: ["\n    input{\n      width: 300px;\n      display: inline;\n    }\n    form{\n      margin-top: 27px;\n    }\n    "]
 	        }), 
@@ -1568,6 +1574,13 @@ webpackJsonp([0],{
 /***/ 331:
 /***/ function(module, exports, __webpack_require__) {
 
+	module.exports = __webpack_require__.p + "17e01beb42d5dc58a08860f1841c37fe.png";
+
+/***/ },
+
+/***/ 332:
+/***/ function(module, exports, __webpack_require__) {
+
 	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -1579,7 +1592,7 @@ webpackJsonp([0],{
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var core_1 = __webpack_require__(7);
-	var definition_row_component_1 = __webpack_require__(332);
+	var definition_row_component_1 = __webpack_require__(333);
 	var DefinitionListComponent = (function () {
 	    function DefinitionListComponent() {
 	        this.definitons = [];
@@ -1605,7 +1618,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 332:
+/***/ 333:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1621,9 +1634,9 @@ webpackJsonp([0],{
 	var store_1 = __webpack_require__(301);
 	var core_1 = __webpack_require__(7);
 	__webpack_require__(305);
-	var store_actions_1 = __webpack_require__(333);
-	var definition_panel_component_1 = __webpack_require__(334);
-	var dictionary_service_1 = __webpack_require__(335);
+	var store_actions_1 = __webpack_require__(334);
+	var definition_panel_component_1 = __webpack_require__(335);
+	var dictionary_service_1 = __webpack_require__(336);
 	var DefinitionRowComponent = (function () {
 	    function DefinitionRowComponent(_dictionaryService, _renderer, _store) {
 	        this._dictionaryService = _dictionaryService;
@@ -1683,7 +1696,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 333:
+/***/ 334:
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1695,7 +1708,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 334:
+/***/ 335:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1734,7 +1747,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 335:
+/***/ 336:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1768,11 +1781,11 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 336:
+/***/ 337:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var store_actions_1 = __webpack_require__(333);
+	var store_actions_1 = __webpack_require__(334);
 	exports.quizletterm = function (state, _a) {
 	    if (state === void 0) { state = []; }
 	    var type = _a.type, payload = _a.payload;
@@ -1787,16 +1800,15 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 337:
+/***/ 338:
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(338);
-	__webpack_require__(387);
+	__webpack_require__(339);
 	__webpack_require__(388);
 	__webpack_require__(389);
 	__webpack_require__(390);
-	__webpack_require__(392);
-	__webpack_require__(395);
+	__webpack_require__(391);
+	__webpack_require__(393);
 	__webpack_require__(396);
 	__webpack_require__(397);
 	__webpack_require__(398);
@@ -1805,34 +1817,34 @@ webpackJsonp([0],{
 	__webpack_require__(401);
 	__webpack_require__(402);
 	__webpack_require__(403);
-	__webpack_require__(405);
-	__webpack_require__(407);
-	__webpack_require__(409);
-	__webpack_require__(411);
-	__webpack_require__(414);
+	__webpack_require__(404);
+	__webpack_require__(406);
+	__webpack_require__(408);
+	__webpack_require__(410);
+	__webpack_require__(412);
 	__webpack_require__(415);
 	__webpack_require__(416);
-	__webpack_require__(420);
-	__webpack_require__(422);
-	__webpack_require__(424);
-	__webpack_require__(428);
+	__webpack_require__(417);
+	__webpack_require__(421);
+	__webpack_require__(423);
+	__webpack_require__(425);
 	__webpack_require__(429);
 	__webpack_require__(430);
 	__webpack_require__(431);
-	__webpack_require__(433);
+	__webpack_require__(432);
 	__webpack_require__(434);
 	__webpack_require__(435);
 	__webpack_require__(436);
 	__webpack_require__(437);
 	__webpack_require__(438);
 	__webpack_require__(439);
-	__webpack_require__(441);
+	__webpack_require__(440);
 	__webpack_require__(442);
 	__webpack_require__(443);
-	__webpack_require__(445);
+	__webpack_require__(444);
 	__webpack_require__(446);
 	__webpack_require__(447);
-	__webpack_require__(449);
+	__webpack_require__(448);
 	__webpack_require__(450);
 	__webpack_require__(451);
 	__webpack_require__(452);
@@ -1846,13 +1858,13 @@ webpackJsonp([0],{
 	__webpack_require__(460);
 	__webpack_require__(461);
 	__webpack_require__(462);
-	__webpack_require__(467);
+	__webpack_require__(463);
 	__webpack_require__(468);
-	__webpack_require__(472);
+	__webpack_require__(469);
 	__webpack_require__(473);
 	__webpack_require__(474);
 	__webpack_require__(475);
-	__webpack_require__(477);
+	__webpack_require__(476);
 	__webpack_require__(478);
 	__webpack_require__(479);
 	__webpack_require__(480);
@@ -1869,43 +1881,43 @@ webpackJsonp([0],{
 	__webpack_require__(491);
 	__webpack_require__(492);
 	__webpack_require__(493);
-	__webpack_require__(495);
+	__webpack_require__(494);
 	__webpack_require__(496);
-	__webpack_require__(502);
+	__webpack_require__(497);
 	__webpack_require__(503);
-	__webpack_require__(505);
+	__webpack_require__(504);
 	__webpack_require__(506);
 	__webpack_require__(507);
-	__webpack_require__(511);
+	__webpack_require__(508);
 	__webpack_require__(512);
 	__webpack_require__(513);
 	__webpack_require__(514);
 	__webpack_require__(515);
-	__webpack_require__(517);
+	__webpack_require__(516);
 	__webpack_require__(518);
 	__webpack_require__(519);
 	__webpack_require__(520);
-	__webpack_require__(523);
-	__webpack_require__(525);
+	__webpack_require__(521);
+	__webpack_require__(524);
 	__webpack_require__(526);
 	__webpack_require__(527);
-	__webpack_require__(529);
-	__webpack_require__(531);
-	__webpack_require__(533);
+	__webpack_require__(528);
+	__webpack_require__(530);
+	__webpack_require__(532);
 	__webpack_require__(534);
 	__webpack_require__(535);
-	__webpack_require__(537);
+	__webpack_require__(536);
 	__webpack_require__(538);
 	__webpack_require__(539);
 	__webpack_require__(540);
-	__webpack_require__(546);
-	__webpack_require__(549);
+	__webpack_require__(541);
+	__webpack_require__(547);
 	__webpack_require__(550);
-	__webpack_require__(552);
+	__webpack_require__(551);
 	__webpack_require__(553);
-	__webpack_require__(556);
+	__webpack_require__(554);
 	__webpack_require__(557);
-	__webpack_require__(560);
+	__webpack_require__(558);
 	__webpack_require__(561);
 	__webpack_require__(562);
 	__webpack_require__(563);
@@ -1924,43 +1936,44 @@ webpackJsonp([0],{
 	__webpack_require__(576);
 	__webpack_require__(577);
 	__webpack_require__(578);
-	__webpack_require__(580);
+	__webpack_require__(579);
 	__webpack_require__(581);
 	__webpack_require__(582);
-	module.exports = __webpack_require__(344);
+	__webpack_require__(583);
+	module.exports = __webpack_require__(345);
 
 /***/ },
 
-/***/ 583:
+/***/ 584:
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(584);
-	__webpack_require__(586);
+	__webpack_require__(585);
 	__webpack_require__(587);
 	__webpack_require__(588);
-	__webpack_require__(590);
+	__webpack_require__(589);
 	__webpack_require__(591);
 	__webpack_require__(592);
 	__webpack_require__(593);
 	__webpack_require__(594);
-	module.exports = __webpack_require__(344).Reflect;
+	__webpack_require__(595);
+	module.exports = __webpack_require__(345).Reflect;
 
 
 /***/ },
 
-/***/ 595:
+/***/ 596:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var Observable_1 = __webpack_require__(41);
-	var mergeMap_1 = __webpack_require__(596);
+	var mergeMap_1 = __webpack_require__(597);
 	Observable_1.Observable.prototype.mergeMap = mergeMap_1.mergeMap;
 	Observable_1.Observable.prototype.flatMap = mergeMap_1.mergeMap;
 	//# sourceMappingURL=mergeMap.js.map
 
 /***/ },
 
-/***/ 596:
+/***/ 597:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1969,8 +1982,8 @@ webpackJsonp([0],{
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
-	var subscribeToResult_1 = __webpack_require__(597);
-	var OuterSubscriber_1 = __webpack_require__(601);
+	var subscribeToResult_1 = __webpack_require__(598);
+	var OuterSubscriber_1 = __webpack_require__(602);
 	/**
 	 * Projects each source value to an Observable which is merged in the output
 	 * Observable.
@@ -2127,16 +2140,16 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 597:
+/***/ 598:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var root_1 = __webpack_require__(42);
 	var isArray_1 = __webpack_require__(48);
-	var isPromise_1 = __webpack_require__(598);
+	var isPromise_1 = __webpack_require__(599);
 	var Observable_1 = __webpack_require__(41);
-	var iterator_1 = __webpack_require__(599);
-	var InnerSubscriber_1 = __webpack_require__(600);
+	var iterator_1 = __webpack_require__(600);
+	var InnerSubscriber_1 = __webpack_require__(601);
 	var $$observable = __webpack_require__(55);
 	function subscribeToResult(outerSubscriber, result, outerValue, outerIndex) {
 	    var destination = new InnerSubscriber_1.InnerSubscriber(outerSubscriber, outerValue, outerIndex);
@@ -2204,7 +2217,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 598:
+/***/ 599:
 /***/ function(module, exports) {
 
 	"use strict";
@@ -2216,7 +2229,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 599:
+/***/ 600:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2254,7 +2267,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 600:
+/***/ 601:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2296,7 +2309,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 601:
+/***/ 602:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";

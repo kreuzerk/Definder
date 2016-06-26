@@ -22,7 +22,6 @@ import {QuizletService} from "../../service/quizlet.service";
         Ouupsi!! An error occured. {{errorMessage}}
       </div>
     </form>
-    <button class="btn btn-default" (click)="toggleSuccessMessage()">Toggle</button>
   `,
   providers: [FormBuilder],
   styles: [`
