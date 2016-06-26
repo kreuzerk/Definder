@@ -17,8 +17,19 @@ import {DefinitionListComponent} from "./components/definition-list/definition.l
 			<definition-list></definition-list>
 			<completion-cmp></completion-cmp>
 	</div>
+	<div *ngIf="!quizletService.accessToken" class="center">
+		<h1>Welcome to the Definder</h1>
+		<h2>Please enter a valid auth Code</h2>
+	</div>
 	`,
-	directives: [DefinitionListComponent, NavbarComponent, CompletionComponent]
+	directives: [DefinitionListComponent, NavbarComponent, CompletionComponent],
+	styles: [`
+		.center {
+		    text-align: center;
+				color: #BDBDBD;
+				margin-top: 200px;
+		}
+		`]
 })
 export class App {
 
