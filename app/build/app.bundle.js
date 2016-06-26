@@ -1260,15 +1260,12 @@ webpackJsonp([0],{
 	        this._store = _store;
 	        this.quizletService = quizletService;
 	    }
-	    App.prototype.logStore = function () {
-	        this._store.select('quizletterm')
-	            .subscribe(function (quizletterms) { console.log(quizletterms); });
-	    };
 	    App = __decorate([
 	        core_1.Component({
 	            selector: 'app',
-	            template: "\n\t<div>\n\t\t<navbar-cmp></navbar-cmp>\n\t</div>\n\t<div *ngIf=\"quizletService.accessToken\" class=\"container-fluid\">\n\t\t\t<definition-list></definition-list>\n\t\t\t<completion-cmp></completion-cmp>\n\t</div>\n\t",
-	            directives: [definition_list_component_1.DefinitionListComponent, navbar_component_1.NavbarComponent, completion_component_1.CompletionComponent]
+	            template: "\n\t<div>\n\t\t<navbar-cmp></navbar-cmp>\n\t</div>\n\t<div *ngIf=\"quizletService.accessToken\" class=\"container-fluid\">\n\t\t\t<definition-list></definition-list>\n\t\t\t<completion-cmp></completion-cmp>\n\t</div>\n\t<div *ngIf=\"!quizletService.accessToken\" class=\"center\">\n\t\t<h1>Welcome to the Definder</h1>\n\t\t<h2>Please enter a valid auth Code</h2>\n\t</div>\n\t",
+	            directives: [definition_list_component_1.DefinitionListComponent, navbar_component_1.NavbarComponent, completion_component_1.CompletionComponent],
+	            styles: ["\n\t\t.center {\n\t\t    text-align: center;\n\t\t\t\tcolor: #BDBDBD;\n\t\t\t\tmargin-top: 200px;\n\t\t}\n\t\t"]
 	        }), 
 	        __metadata('design:paramtypes', [store_1.Store, quizlet_service_1.QuizletService])
 	    ], App);
@@ -1315,28 +1312,17 @@ webpackJsonp([0],{
 	    }
 	    QuizletService.prototype.getAccessToken = function (authCode) {
 	        var _this = this;
-	        console.log('I am calling');
 	        var headers = new http_1.Headers();
 	        headers.append('Content-Type', 'application/x-www-form-urlencoded');
 	        headers.append('Authorization', this.basicAuth);
-	        this._http.post(this.baseURL + '?grant_type=' + this.options.grant_type + '&code=' + authCode, '', { headers: headers })
-	            .map(function (res) { return res.json(); })
-	            .subscribe(function (result) {
+	        var responseStream = this._http.post(this.baseURL + '?grant_type=' + this.options.grant_type + '&code=' + authCode, '', { headers: headers })
+	            .map(function (res) { return res.json(); });
+	        responseStream.subscribe(function (result) {
 	            _this.accessToken = result.access_token;
-	            _this._makeTestCall();
 	        });
-	    };
-	    QuizletService.prototype._makeTestCall = function () {
-	        console.log('I make the call with the token', this.accessToken);
-	        var headers = new http_1.Headers();
-	        headers.append('Authorization', 'Bearer ' + this.accessToken);
-	        var title = 'My first set through the api';
-	        this._http.post('https://api.quizlet.com/2.0/sets?' + 'whitespace=1&title=' + title +
-	            '&terms[]=milch&definitions[]=milk,wert&terms[]=milk&definitions[]=milch&lang_terms=de&lang_definitions=en', '', { headers: headers })
-	            .subscribe(function (response) { return console.log(response); });
+	        return responseStream;
 	    };
 	    QuizletService.prototype.createSet = function (title) {
-	        console.log('Im Service, lets go');
 	        var headers = new http_1.Headers();
 	        headers.append('Authorization', 'Bearer ' + this.accessToken);
 	        var termsAndDefinitions = this._getTermsAndDefinitions();
@@ -1406,11 +1392,7 @@ webpackJsonp([0],{
 	                _this._toggleSuccessMessage();
 	            }
 	        }, function (err) {
-	            console.log('Fehlermeldung', err);
-	            console.log('Body', err._body);
 	            var jsonBody = JSON.parse(err._body);
-	            console.log(jsonBody);
-	            console.log(jsonBody.error_description);
 	            _this._toggleFailureMessage(jsonBody.error_description);
 	        });
 	    };
@@ -1433,7 +1415,7 @@ webpackJsonp([0],{
 	    CompletionComponent = __decorate([
 	        core_1.Component({
 	            selector: 'completion-cmp',
-	            template: "\n    <form [ngFormModel]=\"completionForm\" (submit)=\"createSet()\">\n      <input class=\"form-control\" ngControl=\"setName\" placeHolder=\"Name your set\">\n      <button class=\"btn btn-primary\" type=\"submit\" [disabled]=\"!completionForm.valid\">\n        <span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span>\n        Create Set on Quizlet\n      </button>\n      <div *ngIf=\"setName.dirty && setName.hasError('required')\">\n        A auth Code is required\n      </div>\n      <div *ngIf=\"showSuccessMessage\" class=\"alert alert-success\" role=\"alert\">\n        New Set \"{{setName.value}}\" successfully added to Quizlet\n      </div>\n      <div *ngIf=\"showFailureMessage\" class=\"alert alert-danger\" role=\"alert\">\n        Ouupsi!! An error occured. {{errorMessage}}\n      </div>\n    </form>\n    <button class=\"btn btn-default\" (click)=\"toggleSuccessMessage()\">Toggle</button>\n  ",
+	            template: "\n    <form [ngFormModel]=\"completionForm\" (submit)=\"createSet()\">\n      <input class=\"form-control\" ngControl=\"setName\" placeHolder=\"Name your set\">\n      <button class=\"btn btn-primary\" type=\"submit\" [disabled]=\"!completionForm.valid\">\n        <span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span>\n        Create Set on Quizlet\n      </button>\n      <div *ngIf=\"setName.dirty && setName.hasError('required')\">\n        A auth Code is required\n      </div>\n      <div *ngIf=\"showSuccessMessage\" class=\"alert alert-success\" role=\"alert\">\n        New Set \"{{setName.value}}\" successfully added to Quizlet\n      </div>\n      <div *ngIf=\"showFailureMessage\" class=\"alert alert-danger\" role=\"alert\">\n        Ouupsi!! An error occured. {{errorMessage}}\n      </div>\n    </form>\n  ",
 	            providers: [common_1.FormBuilder],
 	            styles: ["\n    input{\n      width: 300px;\n      display: inline;\n    }\n    div{\n      color: red;\n    }\n    .alert{\n      width: 475px;\n      margin-top: 20px;\n    }\n    "]
 	        }), 
@@ -1501,7 +1483,6 @@ webpackJsonp([0],{
 	var WelcomeUserComponent = (function () {
 	    function WelcomeUserComponent() {
 	        this.image = './build/' + __webpack_require__(329);
-	        console.log('Ich logge', this.image);
 	    }
 	    WelcomeUserComponent = __decorate([
 	        core_1.Component({
@@ -1547,20 +1528,28 @@ webpackJsonp([0],{
 	    function AuthInputComponent(_fb, _quizletService) {
 	        this._fb = _fb;
 	        this._quizletService = _quizletService;
+	        this.showFailureMessage = false;
 	        this.authCode = _fb.control('', common_1.Validators.required);
 	        this.authForm = _fb.group({
 	            authCode: this.authCode
 	        });
 	    }
 	    AuthInputComponent.prototype.getAccessToken = function () {
-	        this._quizletService.getAccessToken(this.authCode.value);
+	        var _this = this;
+	        this._quizletService.getAccessToken(this.authCode.value).
+	            subscribe(function (res) { }, function (error) {
+	            _this.showFailureMessage = true;
+	            setTimeout(function () {
+	                _this.showFailureMessage = false;
+	            }, 2000);
+	        });
 	    };
 	    AuthInputComponent = __decorate([
 	        core_1.Component({
 	            selector: 'auth-input',
-	            template: "\n    <form [ngFormModel]=\"authForm\">\n      <input type=\"text\" class=\"form-control\" ngControl=\"authCode\" placeHolder=\"Please paste your Auth Code here\"/>\n      <div *ngIf=\"authCode.dirty && authCode.hasError('required')\">\n        A auth Code is required\n      </div>\n      <button class=\"btn btn-primary\" (click)=\"getAccessToken()\">Login</button>\n    </form>\n  ",
+	            template: "\n    <form [ngFormModel]=\"authForm\">\n      <input type=\"text\" class=\"form-control\" ngControl=\"authCode\" placeHolder=\"Please paste your Auth Code here\"/>\n      <button class=\"btn btn-primary\" (click)=\"getAccessToken()\">Login</button>\n    </form>\n    <div class=\"errorMessage\" *ngIf=\"authCode.dirty && authCode.hasError('required')\">\n      A auth Code is required\n    </div>\n    <div *ngIf=\"showFailureMessage\" class=\"alert alert-danger\" role=\"alert\">\n      Please enter a valid token\n    </div>\n  ",
 	            providers: [common_1.FormBuilder],
-	            styles: ["\n    input{\n      width: 300px;\n      display: inline;\n    }\n    form{\n      margin-top: 27px;\n    }\n    "]
+	            styles: ["\n    input{\n      width: 300px;\n      display: inline;\n    }\n    form{\n      margin-top: 27px;\n    }\n    .alert{\n      margin-top: 10px;\n    }\n    .errorMessage{\n      color: red;\n    }\n    "]
 	        }), 
 	        __metadata('design:paramtypes', [common_1.FormBuilder, quizlet_service_1.QuizletService])
 	    ], AuthInputComponent);

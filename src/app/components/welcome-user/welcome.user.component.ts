@@ -25,7 +25,6 @@ export class WelcomeUserComponent{
   image: string = './build/' + require('./motivated.png');
 
   constructor(){
-    console.log('Ich logge', this.image);
   }
 
 }
