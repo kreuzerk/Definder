@@ -6,7 +6,7 @@ import {FormBuilder, ControlGroup, Control, Validators} from '@angular/common';
   selector: 'auth-input',
   template: `
     <form [ngFormModel]="authForm">
-      <input type="text" class="form-control" ngControl="authCode" placeHolder="Please past your Auth Code here"/>
+      <input type="text" class="form-control" ngControl="authCode" placeHolder="Please paste your Auth Code here"/>
       <div *ngIf="authCode.dirty && authCode.hasError('required')">
         A auth Code is required
       </div>

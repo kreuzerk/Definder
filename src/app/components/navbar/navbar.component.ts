@@ -5,18 +5,59 @@ import {Component} from '@angular/core';
 @Component({
   selector: 'navbar-cmp',
   template: `
-    <nav class="navbar navbar-default">
+    <nav class="navbar navbar-inverse">
       <div class="container-fluid">
         <div class="navbar-header">
-          <h2 class="navbar-brand">
-            Definder
-          </h2>
+        <div class="textContainer">
+          <div class="smallHeadline">Powered by Quizlet</div>
+          <div class="largeHeadLine">Definder</div>
         </div>
-        <auth-input class="pull-right"></auth-input>
-        <welcome-user class="pull-right"></welcome-user>
+        <img alt="Brand" [src]="image"/>
+        </div>
+        <div class="authAndWelcome">
+          <auth-input class="pull-right"></auth-input>
+          <welcome-user class="pull-right"></welcome-user>
+        </div>
       </div>
     </nav>
   `,
-  directives: [AuthInputComponent, WelcomeUserComponent]
+  directives: [AuthInputComponent, WelcomeUserComponent],
+  styles: [`
+    img{
+      max-width: 100px;
+      max-height: 100px;
+      margin-left: 20px;
+    }
+    .largeHeadLine{
+      font-family: times, Times New Roman, times-roman, georgia, serif;
+	    color: white;
+	    margin: 0;
+	    padding: 0px 0px 6px 0px;
+      font-size: 51px;
+	    line-height: 44px;
+	    letter-spacing: -2px;
+	    font-weight: bold;
+    }
+    .smallHeadline{
+      font-family: Gill Sans, Verdana;
+	    font-size: 11px;
+	    line-height: 14px;
+	    text-transform: uppercase;
+	    letter-spacing: 2px;
+	    font-weight: bold;
+      color: white;
+    }
+    .textContainer{
+      margin-top: 20px;
+      display: inline-block;
+    }
+    .authAndWelcome{
+      margin-top: 10px;
+    }
+    `]
 })
-export class NavbarComponent{}
+export class NavbarComponent{
+
+  image = './build/' + require('./app-image.png');
+
+}
