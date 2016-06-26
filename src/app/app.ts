@@ -35,9 +35,4 @@ export class App {
 
 	constructor(private _store: Store<QuizletStore>, public quizletService: QuizletService){}
 
-	logStore(): void{
-		this._store.select('quizletterm')
-			.subscribe((quizletterms) => { console.log(quizletterms) });
-	}
-
 }

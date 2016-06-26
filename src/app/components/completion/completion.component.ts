@@ -61,11 +61,7 @@ export class CompletionComponent{
         }
       },
       (err) => {
-        console.log('Fehlermeldung', err);
-        console.log('Body', err._body);
         let jsonBody = JSON.parse(err._body);
-        console.log(jsonBody);
-        console.log(jsonBody.error_description);
         this._toggleFailureMessage(jsonBody.error_description);
       }
     );

@@ -107,7 +107,7 @@ function createAuthWindow(){
 	authWindow = new BrowserWindow({ width: 800, height: 600, show: false, 'node-integration': false });
 
 	// Build the OAuth consent page URL
-	authWindow.openDevTools();
+	//authWindow.openDevTools();
 	var quizletUrl = 'https://quizlet.com/authorize?';
 	var authUrl = quizletUrl + 'response_type=' + options.response_type +
 		'&client_id=' + options.client_id + '&scope=' + options.scope + '&state=' + options.state;
@@ -193,7 +193,7 @@ function newWindow () {
 	mainWindow.loadUrl('file://' + __dirname + '/index.html');
 
 	// Open the DevTools.
-	mainWindow.openDevTools();
+	//mainWindow.openDevTools();
 
 	// Emitted when the window is closed.
 	mainWindow.on('closed', function () {
