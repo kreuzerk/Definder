@@ -1297,20 +1297,52 @@ webpackJsonp([0],{
 	    function CompletionComponent(_fb, _quizletService) {
 	        this._fb = _fb;
 	        this._quizletService = _quizletService;
+	        this.showSuccessMessage = false;
+	        this.showFailureMessage = false;
+	        this.errorMessage = '';
 	        this.setName = _fb.control('', common_1.Validators.required);
 	        this.completionForm = this._fb.group({
 	            setName: this.setName
 	        });
 	    }
 	    CompletionComponent.prototype.createSet = function () {
-	        this._quizletService.createSet(this.setName.value);
+	        var _this = this;
+	        this._quizletService.createSet(this.setName.value)
+	            .subscribe(function (response) {
+	            if (201 === response.status) {
+	                _this._toggleSuccessMessage();
+	            }
+	        }, function (err) {
+	            console.log('Fehlermeldung', err);
+	            console.log('Body', err._body);
+	            var jsonBody = JSON.parse(err._body);
+	            console.log(jsonBody);
+	            console.log(jsonBody.error_description);
+	            _this._toggleFailureMessage(jsonBody.error_description);
+	        });
+	    };
+	    CompletionComponent.prototype._toggleSuccessMessage = function () {
+	        var _this = this;
+	        this.showSuccessMessage = true;
+	        setTimeout(function () {
+	            _this.showSuccessMessage = false;
+	        }, 2000);
+	    };
+	    CompletionComponent.prototype._toggleFailureMessage = function (errormessage) {
+	        var _this = this;
+	        this.errorMessage += errormessage;
+	        this.showFailureMessage = true;
+	        setTimeout(function () {
+	            _this.showFailureMessage = false;
+	            _this.errorMessage = '';
+	        }, 2000);
 	    };
 	    CompletionComponent = __decorate([
 	        core_1.Component({
 	            selector: 'completion-cmp',
-	            template: "\n    <form [ngFormModel]=\"completionForm\" (submit)=\"createSet()\">\n      <input class=\"form-control\" ngControl=\"setName\" placeHolder=\"Name your set\">\n      <button class=\"btn btn-primary\" type=\"submit\" [disabled]=\"!completionForm.valid\">\n        <span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span>\n        Create Set on Quizlet\n      </button>\n      <div *ngIf=\"setName.dirty && setName.hasError('required')\">\n        A auth Code is required\n      </div>\n    </form>\n  ",
+	            template: "\n    <form [ngFormModel]=\"completionForm\" (submit)=\"createSet()\">\n      <input class=\"form-control\" ngControl=\"setName\" placeHolder=\"Name your set\">\n      <button class=\"btn btn-primary\" type=\"submit\" [disabled]=\"!completionForm.valid\">\n        <span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span>\n        Create Set on Quizlet\n      </button>\n      <div *ngIf=\"setName.dirty && setName.hasError('required')\">\n        A auth Code is required\n      </div>\n      <div *ngIf=\"showSuccessMessage\" class=\"alert alert-success\" role=\"alert\">\n        New Set \"{{setName.value}}\" successfully added to Quizlet\n      </div>\n      <div *ngIf=\"showFailureMessage\" class=\"alert alert-danger\" role=\"alert\">\n        Ouupsi!! An error occured. {{errorMessage}}\n      </div>\n    </form>\n    <button class=\"btn btn-default\" (click)=\"toggleSuccessMessage()\">Toggle</button>\n  ",
 	            providers: [common_1.FormBuilder],
-	            styles: ["\n    input{\n      width: 300px;\n      display: inline;\n    }\n    div{\n      color: red;\n    }\n    "]
+	            styles: ["\n    input{\n      width: 300px;\n      display: inline;\n    }\n    div{\n      color: red;\n    }\n    .alert{\n      width: 475px;\n      margin-top: 20px;\n    }\n    "]
 	        }), 
 	        __metadata('design:paramtypes', [common_1.FormBuilder, quizlet_service_1.QuizletService])
 	    ], CompletionComponent);
@@ -1382,9 +1414,8 @@ webpackJsonp([0],{
 	        var headers = new http_1.Headers();
 	        headers.append('Authorization', 'Bearer ' + this.accessToken);
 	        var termsAndDefinitions = this._getTermsAndDefinitions();
-	        this._http.post('https://api.quizlet.com/2.0/sets?' + 'whitespace=1&title=' + title +
-	            termsAndDefinitions + '&lang_terms=de&lang_definitions=en', '', { headers: headers })
-	            .subscribe(function (response) { return console.log(response); });
+	        return this._http.post('https://api.quizlet.com/2.0/sets?' + 'whitespace=1&title=' + title +
+	            termsAndDefinitions + '&lang_terms=de&lang_definitions=en', '', { headers: headers });
 	    };
 	    QuizletService.prototype._getTermsAndDefinitions = function () {
 	        var _this = this;

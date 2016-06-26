@@ -56,16 +56,15 @@ export class QuizletService{
 
   }
 
-  createSet(title: string): void {
+  createSet(title: string) {
     console.log('Im Service, lets go');
     let headers = new Headers();
     headers.append('Authorization', 'Bearer ' + this.accessToken);
     let termsAndDefinitions: string = this._getTermsAndDefinitions();
-    this._http.post('https://api.quizlet.com/2.0/sets?' + 'whitespace=1&title=' + title +
+    return this._http.post('https://api.quizlet.com/2.0/sets?' + 'whitespace=1&title=' + title +
     termsAndDefinitions + '&lang_terms=de&lang_definitions=en',
       '', {headers: headers}
-    )
-    .subscribe(response => console.log(response));
+    );
   }
 
   private _getTermsAndDefinitions(): string {
