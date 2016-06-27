@@ -1,3 +1,4 @@
 export enum StoreActions{
-  ADD_QUIZLETTERM
+  ADD_QUIZLETTERM,
+  UPDATE_QUIZLETTERM
 }

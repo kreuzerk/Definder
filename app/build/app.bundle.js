@@ -10,13 +10,13 @@ webpackJsonp([0],{
 	var store_1 = __webpack_require__(301);
 	var app_1 = __webpack_require__(324);
 	var quizlet_service_1 = __webpack_require__(325);
-	var quizletterm_reducer_1 = __webpack_require__(337);
+	var quizletterm_reducer_1 = __webpack_require__(338);
 	;
-	__webpack_require__(338);
-	__webpack_require__(584);
+	__webpack_require__(339);
+	__webpack_require__(585);
 	// Angular2 Dependencies
 	__webpack_require__(305);
-	__webpack_require__(596);
+	__webpack_require__(597);
 	var FakeXSRFStrategy = (function () {
 	    function FakeXSRFStrategy() {
 	    }
@@ -1386,8 +1386,8 @@ webpackJsonp([0],{
 	    }
 	    CompletionComponent.prototype.createSet = function () {
 	        var _this = this;
-	        this._quizletService.createSet(this.setName.value)
-	            .subscribe(function (response) {
+	        this._quizletService.createSet(this.setName.value);
+	        subscribe(function (response) {
 	            if (201 === response.status) {
 	                _this._toggleSuccessMessage();
 	            }
@@ -1625,7 +1625,7 @@ webpackJsonp([0],{
 	__webpack_require__(305);
 	var store_actions_1 = __webpack_require__(334);
 	var definition_panel_component_1 = __webpack_require__(335);
-	var dictionary_service_1 = __webpack_require__(336);
+	var dictionary_service_1 = __webpack_require__(337);
 	var DefinitionRowComponent = (function () {
 	    function DefinitionRowComponent(_dictionaryService, _renderer, _store) {
 	        this._dictionaryService = _dictionaryService;
@@ -1633,15 +1633,16 @@ webpackJsonp([0],{
 	        this._store = _store;
 	        this.TAB_KEYCODE = 9;
 	        this.onTabKey = new core_1.EventEmitter();
+	        this.rowIndex = DefinitionRowComponent.rowCounter;
 	    }
 	    DefinitionRowComponent.prototype.ngAfterViewInit = function () {
 	        this.inputField.nativeElement.focus();
-	        //this._renderer.invokeElementMethod(this.inputField.nativeElement, 'focus');
 	    };
 	    DefinitionRowComponent.prototype.proccesKeyStroke = function (event) {
 	        var _this = this;
 	        if (this._isTabKey(event.keyCode)) {
 	            this.onTabKey.emit(true);
+	            DefinitionRowComponent.rowCounter++;
 	            this.definitions = this._getDefinition(this.inputField.nativeElement.value);
 	            this.definitions.subscribe(function (res) {
 	                var definitions = res.map(function (response) { return response.senses; })
@@ -1651,7 +1652,6 @@ webpackJsonp([0],{
 	                    definitions: definitions
 	                };
 	                _this._store.dispatch({ type: store_actions_1.StoreActions.ADD_QUIZLETTERM.toString(), payload: payload });
-	                //TODO kk: Add to the store
 	            });
 	        }
 	    };
@@ -1661,6 +1661,7 @@ webpackJsonp([0],{
 	    DefinitionRowComponent.prototype._isTabKey = function (keyCode) {
 	        return keyCode === this.TAB_KEYCODE;
 	    };
+	    DefinitionRowComponent.rowCounter = 0;
 	    __decorate([
 	        core_1.Output(), 
 	        __metadata('design:type', Object)
@@ -1672,7 +1673,7 @@ webpackJsonp([0],{
 	    DefinitionRowComponent = __decorate([
 	        core_1.Component({
 	            selector: 'definition-row',
-	            template: "\n      <div class=\"col-lg-4\">\n        <input #inputField class=\"form-control\" type=\"text\" (keydown)=\"proccesKeyStroke($event)\"/>\n      </div>\n      <div class=\"col-lg-8\">\n        <definition-panel [title]=\"inputField.value\" [definitions]=\"definitions | async\"></definition-panel>\n      </div>\n  ",
+	            template: "\n      <div class=\"col-lg-4\">\n        <input #inputField class=\"form-control\" type=\"text\" (keydown)=\"proccesKeyStroke($event)\"/>\n      </div>\n      <div class=\"col-lg-8\">\n        <definition-panel [rowIndex]=\"rowIndex\" [title]=\"inputField.value\" [definitions]=\"definitions | async\"></definition-panel>\n      </div>\n  ",
 	            directives: [definition_panel_component_1.DefinitionPanelComponent],
 	            providers: [dictionary_service_1.DictionaryService]
 	        }), 
@@ -1691,6 +1692,7 @@ webpackJsonp([0],{
 	"use strict";
 	(function (StoreActions) {
 	    StoreActions[StoreActions["ADD_QUIZLETTERM"] = 0] = "ADD_QUIZLETTERM";
+	    StoreActions[StoreActions["UPDATE_QUIZLETTERM"] = 1] = "UPDATE_QUIZLETTERM";
 	})(exports.StoreActions || (exports.StoreActions = {}));
 	var StoreActions = exports.StoreActions;
 
@@ -1710,10 +1712,27 @@ webpackJsonp([0],{
 	var __metadata = (this && this.__metadata) || function (k, v) {
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
+	var store_1 = __webpack_require__(301);
 	var core_1 = __webpack_require__(7);
+	var store_actions_1 = __webpack_require__(334);
 	var DefinitionPanelComponent = (function () {
-	    function DefinitionPanelComponent() {
+	    function DefinitionPanelComponent(_store) {
+	        this._store = _store;
+	        this.image = 'build/' + __webpack_require__(336);
 	    }
+	    DefinitionPanelComponent.prototype.deleteDefinition = function (index) {
+	        this.definitions.splice(index, 1);
+	        console.log('Index of Object', this.rowIndex);
+	        var editedTerm = {
+	            word: this.title,
+	            definitions: this.definitions
+	        };
+	        var payload = {
+	            rowIndex: this.rowIndex,
+	            newQuizletterm: editedTerm
+	        };
+	        this._store.dispatch({ type: store_actions_1.StoreActions.UPDATE_QUIZLETTERM.toString(), payload: payload });
+	    };
 	    __decorate([
 	        core_1.Input(), 
 	        __metadata('design:type', Object)
@@ -1722,12 +1741,17 @@ webpackJsonp([0],{
 	        core_1.Input(), 
 	        __metadata('design:type', String)
 	    ], DefinitionPanelComponent.prototype, "title", void 0);
+	    __decorate([
+	        core_1.Input(), 
+	        __metadata('design:type', Number)
+	    ], DefinitionPanelComponent.prototype, "rowIndex", void 0);
 	    DefinitionPanelComponent = __decorate([
 	        core_1.Component({
 	            selector: 'definition-panel',
-	            template: "\n  <div class=\"panel panel-primary\">\n    <div class=\"panel-heading\">\n      <h3 class=\"panel-title\" *ngIf=\"title\">Search Results for {{ title }}</h3>\n    </div>\n    <div class=\"panel-body\">\n      <ul>\n        <li *ngFor=\"#definition of definitions\">\n          <b>{{definition.headword}}</b>\n          {{definition.senses[0].definition}}\n        </li>\n      </ul>\n    </div>\n  </div>\n  "
+	            template: "\n  <div class=\"panel panel-primary\">\n    <div class=\"panel-heading\">\n      <h3 class=\"panel-title\" *ngIf=\"title\">Search Results for {{ title }}</h3>\n    </div>\n    <div class=\"panel-body\">\n      <ul>\n        <li *ngFor=\"let definition of definitions; let i = index\">\n        <img [src]=\"image\" (click)=\"deleteDefinition(i)\"/>\n          <b>{{definition.headword}}</b>\n          {{definition.senses[0].definition}}\n        </li>\n      </ul>\n    </div>\n  </div>\n  ",
+	            styles: ["\n    ul{\n      list-style-type: none;\n    }\n    "]
 	        }), 
-	        __metadata('design:paramtypes', [])
+	        __metadata('design:paramtypes', [store_1.Store])
 	    ], DefinitionPanelComponent);
 	    return DefinitionPanelComponent;
 	}());
@@ -1737,6 +1761,13 @@ webpackJsonp([0],{
 /***/ },
 
 /***/ 336:
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "bd9fc3f927c1354271502f13ed9a8936.png";
+
+/***/ },
+
+/***/ 337:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1770,7 +1801,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 337:
+/***/ 338:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1781,6 +1812,10 @@ webpackJsonp([0],{
 	    switch (type) {
 	        case store_actions_1.StoreActions.ADD_QUIZLETTERM.toString():
 	            return state.concat([payload]);
+	        case store_actions_1.StoreActions.UPDATE_QUIZLETTERM.toString():
+	            var newState = state.slice(0); //Copy the array - Imutable Proramming
+	            newState[payload.rowIndex] = payload.newQuizletterm;
+	            return newState;
 	        default:
 	            return state;
 	    }
@@ -1789,16 +1824,15 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 338:
+/***/ 339:
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(339);
-	__webpack_require__(388);
+	__webpack_require__(340);
 	__webpack_require__(389);
 	__webpack_require__(390);
 	__webpack_require__(391);
-	__webpack_require__(393);
-	__webpack_require__(396);
+	__webpack_require__(392);
+	__webpack_require__(394);
 	__webpack_require__(397);
 	__webpack_require__(398);
 	__webpack_require__(399);
@@ -1807,34 +1841,34 @@ webpackJsonp([0],{
 	__webpack_require__(402);
 	__webpack_require__(403);
 	__webpack_require__(404);
-	__webpack_require__(406);
-	__webpack_require__(408);
-	__webpack_require__(410);
-	__webpack_require__(412);
-	__webpack_require__(415);
+	__webpack_require__(405);
+	__webpack_require__(407);
+	__webpack_require__(409);
+	__webpack_require__(411);
+	__webpack_require__(413);
 	__webpack_require__(416);
 	__webpack_require__(417);
-	__webpack_require__(421);
-	__webpack_require__(423);
-	__webpack_require__(425);
-	__webpack_require__(429);
+	__webpack_require__(418);
+	__webpack_require__(422);
+	__webpack_require__(424);
+	__webpack_require__(426);
 	__webpack_require__(430);
 	__webpack_require__(431);
 	__webpack_require__(432);
-	__webpack_require__(434);
+	__webpack_require__(433);
 	__webpack_require__(435);
 	__webpack_require__(436);
 	__webpack_require__(437);
 	__webpack_require__(438);
 	__webpack_require__(439);
 	__webpack_require__(440);
-	__webpack_require__(442);
+	__webpack_require__(441);
 	__webpack_require__(443);
 	__webpack_require__(444);
-	__webpack_require__(446);
+	__webpack_require__(445);
 	__webpack_require__(447);
 	__webpack_require__(448);
-	__webpack_require__(450);
+	__webpack_require__(449);
 	__webpack_require__(451);
 	__webpack_require__(452);
 	__webpack_require__(453);
@@ -1848,13 +1882,13 @@ webpackJsonp([0],{
 	__webpack_require__(461);
 	__webpack_require__(462);
 	__webpack_require__(463);
-	__webpack_require__(468);
+	__webpack_require__(464);
 	__webpack_require__(469);
-	__webpack_require__(473);
+	__webpack_require__(470);
 	__webpack_require__(474);
 	__webpack_require__(475);
 	__webpack_require__(476);
-	__webpack_require__(478);
+	__webpack_require__(477);
 	__webpack_require__(479);
 	__webpack_require__(480);
 	__webpack_require__(481);
@@ -1871,43 +1905,43 @@ webpackJsonp([0],{
 	__webpack_require__(492);
 	__webpack_require__(493);
 	__webpack_require__(494);
-	__webpack_require__(496);
+	__webpack_require__(495);
 	__webpack_require__(497);
-	__webpack_require__(503);
+	__webpack_require__(498);
 	__webpack_require__(504);
-	__webpack_require__(506);
+	__webpack_require__(505);
 	__webpack_require__(507);
 	__webpack_require__(508);
-	__webpack_require__(512);
+	__webpack_require__(509);
 	__webpack_require__(513);
 	__webpack_require__(514);
 	__webpack_require__(515);
 	__webpack_require__(516);
-	__webpack_require__(518);
+	__webpack_require__(517);
 	__webpack_require__(519);
 	__webpack_require__(520);
 	__webpack_require__(521);
-	__webpack_require__(524);
-	__webpack_require__(526);
+	__webpack_require__(522);
+	__webpack_require__(525);
 	__webpack_require__(527);
 	__webpack_require__(528);
-	__webpack_require__(530);
-	__webpack_require__(532);
-	__webpack_require__(534);
+	__webpack_require__(529);
+	__webpack_require__(531);
+	__webpack_require__(533);
 	__webpack_require__(535);
 	__webpack_require__(536);
-	__webpack_require__(538);
+	__webpack_require__(537);
 	__webpack_require__(539);
 	__webpack_require__(540);
 	__webpack_require__(541);
-	__webpack_require__(547);
-	__webpack_require__(550);
+	__webpack_require__(542);
+	__webpack_require__(548);
 	__webpack_require__(551);
-	__webpack_require__(553);
+	__webpack_require__(552);
 	__webpack_require__(554);
-	__webpack_require__(557);
+	__webpack_require__(555);
 	__webpack_require__(558);
-	__webpack_require__(561);
+	__webpack_require__(559);
 	__webpack_require__(562);
 	__webpack_require__(563);
 	__webpack_require__(564);
@@ -1926,43 +1960,44 @@ webpackJsonp([0],{
 	__webpack_require__(577);
 	__webpack_require__(578);
 	__webpack_require__(579);
-	__webpack_require__(581);
+	__webpack_require__(580);
 	__webpack_require__(582);
 	__webpack_require__(583);
-	module.exports = __webpack_require__(345);
+	__webpack_require__(584);
+	module.exports = __webpack_require__(346);
 
 /***/ },
 
-/***/ 584:
+/***/ 585:
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(585);
-	__webpack_require__(587);
+	__webpack_require__(586);
 	__webpack_require__(588);
 	__webpack_require__(589);
-	__webpack_require__(591);
+	__webpack_require__(590);
 	__webpack_require__(592);
 	__webpack_require__(593);
 	__webpack_require__(594);
 	__webpack_require__(595);
-	module.exports = __webpack_require__(345).Reflect;
+	__webpack_require__(596);
+	module.exports = __webpack_require__(346).Reflect;
 
 
 /***/ },
 
-/***/ 596:
+/***/ 597:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var Observable_1 = __webpack_require__(41);
-	var mergeMap_1 = __webpack_require__(597);
+	var mergeMap_1 = __webpack_require__(598);
 	Observable_1.Observable.prototype.mergeMap = mergeMap_1.mergeMap;
 	Observable_1.Observable.prototype.flatMap = mergeMap_1.mergeMap;
 	//# sourceMappingURL=mergeMap.js.map
 
 /***/ },
 
-/***/ 597:
+/***/ 598:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1971,8 +2006,8 @@ webpackJsonp([0],{
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
-	var subscribeToResult_1 = __webpack_require__(598);
-	var OuterSubscriber_1 = __webpack_require__(602);
+	var subscribeToResult_1 = __webpack_require__(599);
+	var OuterSubscriber_1 = __webpack_require__(603);
 	/**
 	 * Projects each source value to an Observable which is merged in the output
 	 * Observable.
@@ -2129,16 +2164,16 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 598:
+/***/ 599:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var root_1 = __webpack_require__(42);
 	var isArray_1 = __webpack_require__(48);
-	var isPromise_1 = __webpack_require__(599);
+	var isPromise_1 = __webpack_require__(600);
 	var Observable_1 = __webpack_require__(41);
-	var iterator_1 = __webpack_require__(600);
-	var InnerSubscriber_1 = __webpack_require__(601);
+	var iterator_1 = __webpack_require__(601);
+	var InnerSubscriber_1 = __webpack_require__(602);
 	var $$observable = __webpack_require__(55);
 	function subscribeToResult(outerSubscriber, result, outerValue, outerIndex) {
 	    var destination = new InnerSubscriber_1.InnerSubscriber(outerSubscriber, outerValue, outerIndex);
@@ -2206,7 +2241,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 599:
+/***/ 600:
 /***/ function(module, exports) {
 
 	"use strict";
@@ -2218,7 +2253,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 600:
+/***/ 601:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2256,7 +2291,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 601:
+/***/ 602:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2298,7 +2333,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 602:
+/***/ 603:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";

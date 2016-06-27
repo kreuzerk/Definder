@@ -1,4 +1,8 @@
+import {Store} from "@ngrx/store";
 import {Component, Input} from '@angular/core';
+import {Quizletterm} from "../../model/quizletterm.model";
+import {QuizletStore} from "../../model/quizletstore.model";
+import {StoreActions} from "../../actions/store.actions";
 
 @Component({
   selector: 'definition-panel',
@@ -28,9 +32,24 @@ export class DefinitionPanelComponent{
 
   @Input() definitions: any;
   @Input() title: string;
+  @Input() rowIndex: number;
   image: string = 'build/' + require('./trash-icon.png');
+
+  constructor(private _store: Store<QuizletStore>){}
 
   deleteDefinition(index: number): void{
     this.definitions.splice(index, 1);
+    console.log('Index of Object', this.rowIndex);
+
+    let editedTerm: Quizletterm = {
+      word: this.title,
+      definitions: this.definitions
+    };
+
+    let payload = {
+      rowIndex: this.rowIndex,
+      newQuizletterm: editedTerm
+    }
+    this._store.dispatch({type: StoreActions.UPDATE_QUIZLETTERM.toString(), payload});
   }
 }
