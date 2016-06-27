@@ -1386,8 +1386,8 @@ webpackJsonp([0],{
 	    }
 	    CompletionComponent.prototype.createSet = function () {
 	        var _this = this;
-	        this._quizletService.createSet(this.setName.value);
-	        subscribe(function (response) {
+	        this._quizletService.createSet(this.setName.value)
+	            .subscribe(function (response) {
 	            if (201 === response.status) {
 	                _this._toggleSuccessMessage();
 	            }
@@ -1722,10 +1722,11 @@ webpackJsonp([0],{
 	    }
 	    DefinitionPanelComponent.prototype.deleteDefinition = function (index) {
 	        this.definitions.splice(index, 1);
-	        console.log('Index of Object', this.rowIndex);
+	        var mappedDefinitions = this.definitions.map(function (definition) { return definition.senses; })
+	            .map(function (senses) { return senses[0].definition; });
 	        var editedTerm = {
 	            word: this.title,
-	            definitions: this.definitions
+	            definitions: mappedDefinitions
 	        };
 	        var payload = {
 	            rowIndex: this.rowIndex,

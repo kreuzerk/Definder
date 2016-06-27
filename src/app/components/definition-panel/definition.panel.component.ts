@@ -39,11 +39,13 @@ export class DefinitionPanelComponent{
 
   deleteDefinition(index: number): void{
     this.definitions.splice(index, 1);
-    console.log('Index of Object', this.rowIndex);
+    
+    let mappedDefinitions = this.definitions.map(definition => definition.senses)
+      .map(senses => senses[0].definition);
 
     let editedTerm: Quizletterm = {
       word: this.title,
-      definitions: this.definitions
+      definitions: mappedDefinitions
     };
 
     let payload = {
