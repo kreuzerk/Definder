@@ -39,7 +39,7 @@ export class DefinitionPanelComponent{
 
   deleteDefinition(index: number): void{
     this.definitions.splice(index, 1);
-    
+
     let mappedDefinitions = this.definitions.map(definition => definition.senses)
       .map(senses => senses[0].definition);
 

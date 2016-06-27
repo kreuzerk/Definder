@@ -3,7 +3,6 @@ import {Component} from '@angular/core';
 @Component({
   selector: 'welcome-user',
   template: `
-    <h2>Welcome</h2>
     <img [src]="image"/>
   `,
   styles: [
@@ -11,7 +10,7 @@ import {Component} from '@angular/core';
     h2{
       display: inline;
       font-family: "Times New Roman", Times, serif;
-      margin-top: 2cm;
+      margin-top: 1cm;
       font-size : 14pt;
       line-height : 100%;
       margin : 10px;

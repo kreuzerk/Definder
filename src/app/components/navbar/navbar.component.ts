@@ -1,3 +1,4 @@
+import {ToggleComponent} from "../toggle/toggle.component";
 import {QuizletService} from "../../service/quizlet.service";
 import {WelcomeUserComponent} from "../welcome-user/welcome.user.component";
 import {AuthInputComponent} from "../authcode-input/authcode.input.component";
@@ -18,11 +19,12 @@ import {Component} from '@angular/core';
         <div class="authAndWelcome">
           <auth-input *ngIf="!quizletService.accessToken" class="pull-right"></auth-input>
           <welcome-user *ngIf="quizletService.accessToken" class="pull-right"></welcome-user>
+          <toggle-cmp *ngIf="quizletService.accessToken" class="text-center"></toggle-cmp>
         </div>
       </div>
     </nav>
   `,
-  directives: [AuthInputComponent, WelcomeUserComponent],
+  directives: [AuthInputComponent, WelcomeUserComponent, ToggleComponent],
   styles: [`
     img{
       max-width: 100px;
