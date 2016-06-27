@@ -18,14 +18,15 @@ import {DictionaryService} from "../../service/dictionary.service";
         <input #inputField class="form-control" type="text" (keydown)="proccesKeyStroke($event)"/>
       </div>
       <div class="col-lg-8">
-        <definition-panel [title]="inputField.value" [definitions]="definitions | async"></definition-panel>
+        <definition-panel [rowIndex]="rowIndex" [title]="inputField.value" [definitions]="definitions | async"></definition-panel>
       </div>
   `,
   directives: [DefinitionPanelComponent],
   providers: [DictionaryService]
 })
 export class DefinitionRowComponent implements AfterViewInit{
-
+  rowIndex: number;
+  private static rowCounter: number = 0;
   private TAB_KEYCODE: number = 9;
   @Output() onTabKey = new EventEmitter<boolean>();
   definitions: Observable<Response>;
@@ -33,16 +34,17 @@ export class DefinitionRowComponent implements AfterViewInit{
 
   constructor(private _dictionaryService: DictionaryService, private _renderer: Renderer,
     private _store: Store<QuizletStore>){
+      this.rowIndex = DefinitionRowComponent.rowCounter;
   }
 
   ngAfterViewInit(){
     this.inputField.nativeElement.focus();
-    //this._renderer.invokeElementMethod(this.inputField.nativeElement, 'focus');
   }
 
   proccesKeyStroke(event){
     if(this._isTabKey(event.keyCode)){
       this.onTabKey.emit(true);
+      DefinitionRowComponent.rowCounter++;
       this.definitions = this._getDefinition(this.inputField.nativeElement.value);
       this.definitions.subscribe((res) => {
         let definitions = res.map(response => response.senses)
@@ -51,10 +53,7 @@ export class DefinitionRowComponent implements AfterViewInit{
           word: this.inputField.nativeElement.value,
           definitions: definitions
         }
-
-        this._store.dispatch({type: StoreActions.ADD_QUIZLETTERM.toString(), payload})
-        //TODO kk: Add to the store
-
+        this._store.dispatch({type: StoreActions.ADD_QUIZLETTERM.toString(), payload});
       });
     }
   }

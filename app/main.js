@@ -193,7 +193,7 @@ function newWindow () {
 	mainWindow.loadUrl('file://' + __dirname + '/index.html');
 
 	// Open the DevTools.
-	//mainWindow.openDevTools();
+	mainWindow.openDevTools();
 
 	// Emitted when the window is closed.
 	mainWindow.on('closed', function () {
