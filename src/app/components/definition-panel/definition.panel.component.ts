@@ -61,15 +61,12 @@ export class DefinitionPanelComponent{
     let mappedDefinitions = this.definitions.map(definition => definition.senses)
       .map(senses => senses[0].definition);
 
-    let editedTerm: Quizletterm = {
+    let payload: Quizletterm = {
+      id: this.rowIndex,
       word: this.title,
       definitions: mappedDefinitions
     };
 
-    let payload = {
-      rowIndex: this.rowIndex,
-      newQuizletterm: editedTerm
-    }
     this._store.dispatch({type: StoreActions.UPDATE_QUIZLETTERM.toString(), payload});
   }
 }

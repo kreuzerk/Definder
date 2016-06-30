@@ -6,9 +6,11 @@ export const quizletterm = (state: Array<Quizletterm> = [], {type, payload}) => 
     case StoreActions.ADD_QUIZLETTERM.toString():
       return [...state, payload];
     case StoreActions.UPDATE_QUIZLETTERM.toString():
-      let newState = state.slice(0); //Copy the array - Imutable Proramming
-      newState[payload.rowIndex] = payload.newQuizletterm;
-      return newState;
+        return state.map(term =>
+        term.id === payload.id ? Object.assign({}, term, payload) : term);
+
+    case StoreActions.DELETE_QUIZLETTERMS.toString():
+      return [];
     default:
       return state;
   }

@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, EventEmitter, Output} from '@angular/core';
 import {FormBuilder, ControlGroup, Control, Validators} from '@angular/common';
 
 import {QuizletService} from "../../service/quizlet.service";
@@ -12,8 +12,12 @@ import {QuizletService} from "../../service/quizlet.service";
         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
         Create Set on Quizlet
       </button>
+      <button class="btn btn-danger" type="button" (click)="clearSet()">
+        <span class="glyphicon glyphicon-file" aria-hidden="true"></span>
+        Clear Set
+      </button>
       <div *ngIf="setName.dirty && setName.hasError('required')">
-        A auth Code is required
+        A Setname is required
       </div>
       <div *ngIf="showSuccessMessage" class="alert alert-success" role="alert">
         New Set "{{setName.value}}" successfully added to Quizlet
@@ -45,6 +49,7 @@ export class CompletionComponent{
   showSuccessMessage: boolean = false;
   showFailureMessage: boolean = false;
   errorMessage: string = '';
+  @Output() onClear = new EventEmitter<boolean>();
 
   constructor(private _fb: FormBuilder, private _quizletService: QuizletService){
     this.setName = _fb.control('', Validators.required);
@@ -67,6 +72,11 @@ export class CompletionComponent{
     );
   }
 
+  private _restetInputs():void {
+    this.setName.updateValue('');
+    this.setName.setErrors(null);
+  }
+
   private _toggleSuccessMessage(): void{
     this.showSuccessMessage = true;
     setTimeout(() => {
@@ -81,5 +91,9 @@ export class CompletionComponent{
       this.showFailureMessage = false;
       this.errorMessage = '';
     }, 2000)
+  }
+
+  clearSet(): void{
+    this.onClear.emit(true);
   }
 }

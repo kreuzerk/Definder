@@ -12,7 +12,6 @@ webpackJsonp([0],{
 	var app_1 = __webpack_require__(325);
 	var quizlet_service_1 = __webpack_require__(326);
 	var quizletterm_reducer_1 = __webpack_require__(340);
-	;
 	__webpack_require__(341);
 	__webpack_require__(587);
 	// Angular2 Dependencies
@@ -1285,7 +1284,7 @@ webpackJsonp([0],{
 	    App = __decorate([
 	        core_1.Component({
 	            selector: 'app',
-	            template: "\n\t<div>\n\t\t<navbar-cmp></navbar-cmp>\n\t</div>\n\t<div *ngIf=\"quizletService.accessToken\" class=\"container-fluid\">\n\t\t\t<definition-list></definition-list>\n\t\t\t<completion-cmp></completion-cmp>\n\t</div>\n\t<div *ngIf=\"!quizletService.accessToken\" class=\"center\">\n\t\t<h1>Welcome to the Definder</h1>\n\t\t<h2>Please enter a valid auth Code</h2>\n\t</div>\n\t",
+	            template: "\n\t<div>\n\t\t<navbar-cmp></navbar-cmp>\n\t</div>\n\t<div *ngIf=\"quizletService.accessToken\" class=\"container-fluid\">\n\t\t\t<definition-list #defList></definition-list>\n\t\t\t<completion-cmp (onClear)=\"defList.resetDefinitions()\"></completion-cmp>\n\t</div>\n\t<div *ngIf=\"!quizletService.accessToken\" class=\"center\">\n\t\t<h1>Welcome to the Definder</h1>\n\t\t<h2>Please enter a valid auth Code</h2>\n\t</div>\n\t",
 	            directives: [definition_list_component_1.DefinitionListComponent, navbar_component_1.NavbarComponent, completion_component_1.CompletionComponent],
 	            styles: ["\n\t\t.center {\n\t\t    text-align: center;\n\t\t\t\tcolor: #BDBDBD;\n\t\t\t\tmargin-top: 200px;\n\t\t}\n\t\t"]
 	        }), 
@@ -1401,6 +1400,7 @@ webpackJsonp([0],{
 	        this.showSuccessMessage = false;
 	        this.showFailureMessage = false;
 	        this.errorMessage = '';
+	        this.onClear = new core_1.EventEmitter();
 	        this.setName = _fb.control('', common_1.Validators.required);
 	        this.completionForm = this._fb.group({
 	            setName: this.setName
@@ -1418,6 +1418,10 @@ webpackJsonp([0],{
 	            _this._toggleFailureMessage(jsonBody.error_description);
 	        });
 	    };
+	    CompletionComponent.prototype._restetInputs = function () {
+	        this.setName.updateValue('');
+	        this.setName.setErrors(null);
+	    };
 	    CompletionComponent.prototype._toggleSuccessMessage = function () {
 	        var _this = this;
 	        this.showSuccessMessage = true;
@@ -1434,10 +1438,17 @@ webpackJsonp([0],{
 	            _this.errorMessage = '';
 	        }, 2000);
 	    };
+	    CompletionComponent.prototype.clearSet = function () {
+	        this.onClear.emit(true);
+	    };
+	    __decorate([
+	        core_1.Output(), 
+	        __metadata('design:type', Object)
+	    ], CompletionComponent.prototype, "onClear", void 0);
 	    CompletionComponent = __decorate([
 	        core_1.Component({
 	            selector: 'completion-cmp',
-	            template: "\n    <form [ngFormModel]=\"completionForm\" (submit)=\"createSet()\">\n      <input class=\"form-control\" ngControl=\"setName\" placeHolder=\"Name your set\">\n      <button class=\"btn btn-primary\" type=\"submit\" [disabled]=\"!completionForm.valid\">\n        <span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span>\n        Create Set on Quizlet\n      </button>\n      <div *ngIf=\"setName.dirty && setName.hasError('required')\">\n        A auth Code is required\n      </div>\n      <div *ngIf=\"showSuccessMessage\" class=\"alert alert-success\" role=\"alert\">\n        New Set \"{{setName.value}}\" successfully added to Quizlet\n      </div>\n      <div *ngIf=\"showFailureMessage\" class=\"alert alert-danger\" role=\"alert\">\n        Ouupsi!! An error occured. {{errorMessage}}\n      </div>\n    </form>\n  ",
+	            template: "\n    <form [ngFormModel]=\"completionForm\" (submit)=\"createSet()\">\n      <input class=\"form-control\" ngControl=\"setName\" placeHolder=\"Name your set\">\n      <button class=\"btn btn-primary\" type=\"submit\" [disabled]=\"!completionForm.valid\">\n        <span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span>\n        Create Set on Quizlet\n      </button>\n      <button class=\"btn btn-danger\" type=\"button\" (click)=\"clearSet()\">\n        <span class=\"glyphicon glyphicon-file\" aria-hidden=\"true\"></span>\n        Clear Set\n      </button>\n      <div *ngIf=\"setName.dirty && setName.hasError('required')\">\n        A Setname is required\n      </div>\n      <div *ngIf=\"showSuccessMessage\" class=\"alert alert-success\" role=\"alert\">\n        New Set \"{{setName.value}}\" successfully added to Quizlet\n      </div>\n      <div *ngIf=\"showFailureMessage\" class=\"alert alert-danger\" role=\"alert\">\n        Ouupsi!! An error occured. {{errorMessage}}\n      </div>\n    </form>\n  ",
 	            providers: [common_1.FormBuilder],
 	            styles: ["\n    input{\n      width: 300px;\n      display: inline;\n    }\n    div{\n      color: red;\n    }\n    .alert{\n      width: 475px;\n      margin-top: 20px;\n    }\n    "]
 	        }), 
@@ -1642,11 +1653,15 @@ webpackJsonp([0],{
 	var __metadata = (this && this.__metadata) || function (k, v) {
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
+	var store_actions_1 = __webpack_require__(335);
+	var store_1 = __webpack_require__(302);
 	var core_1 = __webpack_require__(27);
-	var definition_row_component_1 = __webpack_require__(335);
+	var definition_row_component_1 = __webpack_require__(336);
 	var DefinitionListComponent = (function () {
-	    function DefinitionListComponent() {
+	    function DefinitionListComponent(_store) {
+	        this._store = _store;
 	        this.definitons = [];
+	        this.rowsToDisplay = 0;
 	    }
 	    DefinitionListComponent.prototype.ngOnInit = function () {
 	        this.definitons.length = 1;
@@ -1654,13 +1669,18 @@ webpackJsonp([0],{
 	    DefinitionListComponent.prototype.incrementDefinitionsLength = function () {
 	        this.definitons.length++;
 	    };
+	    DefinitionListComponent.prototype.resetDefinitions = function () {
+	        this.rowsToDisplay = this.definitons.length - 1;
+	        var payload = undefined;
+	        this._store.dispatch({ type: store_actions_1.StoreActions.DELETE_QUIZLETTERMS.toString(), payload: payload });
+	    };
 	    DefinitionListComponent = __decorate([
 	        core_1.Component({
 	            selector: 'definition-list',
-	            template: "\n    <div class=\"row\" *ngFor=\"#defintion of definitons\">\n      <definition-row (onTabKey)=\"incrementDefinitionsLength()\"></definition-row>\n    </div>\n  ",
+	            template: "\n    <div class=\"row\" *ngFor=\"#defintion of definitons, let i = index\">\n      <definition-row *ngIf=\"i >= rowsToDisplay\"(onTabKey)=\"incrementDefinitionsLength()\"></definition-row>\n    </div>\n  ",
 	            directives: [definition_row_component_1.DefinitionRowComponent]
 	        }), 
-	        __metadata('design:paramtypes', [])
+	        __metadata('design:paramtypes', [store_1.Store])
 	    ], DefinitionListComponent);
 	    return DefinitionListComponent;
 	}());
@@ -1670,6 +1690,20 @@ webpackJsonp([0],{
 /***/ },
 
 /***/ 335:
+/***/ function(module, exports) {
+
+	"use strict";
+	(function (StoreActions) {
+	    StoreActions[StoreActions["ADD_QUIZLETTERM"] = 0] = "ADD_QUIZLETTERM";
+	    StoreActions[StoreActions["UPDATE_QUIZLETTERM"] = 1] = "UPDATE_QUIZLETTERM";
+	    StoreActions[StoreActions["DELETE_QUIZLETTERMS"] = 2] = "DELETE_QUIZLETTERMS";
+	})(exports.StoreActions || (exports.StoreActions = {}));
+	var StoreActions = exports.StoreActions;
+
+
+/***/ },
+
+/***/ 336:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1685,7 +1719,7 @@ webpackJsonp([0],{
 	var store_1 = __webpack_require__(302);
 	var core_1 = __webpack_require__(27);
 	__webpack_require__(306);
-	var store_actions_1 = __webpack_require__(336);
+	var store_actions_1 = __webpack_require__(335);
 	var definition_panel_component_1 = __webpack_require__(337);
 	var dictionary_service_1 = __webpack_require__(339);
 	var DefinitionRowComponent = (function () {
@@ -1704,17 +1738,19 @@ webpackJsonp([0],{
 	        var _this = this;
 	        if (this._isTabKey(event.keyCode)) {
 	            this.onTabKey.emit(true);
-	            DefinitionRowComponent.rowCounter++;
 	            this.definitions = this._getDefinition(this.inputField.nativeElement.value);
+	            var counter_1 = DefinitionRowComponent.rowCounter;
 	            this.definitions.subscribe(function (res) {
 	                var definitions = res.map(function (response) { return response.senses; })
 	                    .map(function (senses) { return senses[0].definition; });
 	                var payload = {
+	                    id: counter_1,
 	                    word: _this.inputField.nativeElement.value,
 	                    definitions: definitions
 	                };
 	                _this._store.dispatch({ type: store_actions_1.StoreActions.ADD_QUIZLETTERM.toString(), payload: payload });
 	            });
+	            DefinitionRowComponent.rowCounter++;
 	        }
 	    };
 	    DefinitionRowComponent.prototype._getDefinition = function (word) {
@@ -1748,19 +1784,6 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 336:
-/***/ function(module, exports) {
-
-	"use strict";
-	(function (StoreActions) {
-	    StoreActions[StoreActions["ADD_QUIZLETTERM"] = 0] = "ADD_QUIZLETTERM";
-	    StoreActions[StoreActions["UPDATE_QUIZLETTERM"] = 1] = "UPDATE_QUIZLETTERM";
-	})(exports.StoreActions || (exports.StoreActions = {}));
-	var StoreActions = exports.StoreActions;
-
-
-/***/ },
-
 /***/ 337:
 /***/ function(module, exports, __webpack_require__) {
 
@@ -1777,7 +1800,7 @@ webpackJsonp([0],{
 	var mode_service_1 = __webpack_require__(1);
 	var store_1 = __webpack_require__(302);
 	var core_1 = __webpack_require__(27);
-	var store_actions_1 = __webpack_require__(336);
+	var store_actions_1 = __webpack_require__(335);
 	var DefinitionPanelComponent = (function () {
 	    function DefinitionPanelComponent(_store, _modeService) {
 	        var _this = this;
@@ -1804,13 +1827,10 @@ webpackJsonp([0],{
 	    DefinitionPanelComponent.prototype._updateDefinition = function () {
 	        var mappedDefinitions = this.definitions.map(function (definition) { return definition.senses; })
 	            .map(function (senses) { return senses[0].definition; });
-	        var editedTerm = {
+	        var payload = {
+	            id: this.rowIndex,
 	            word: this.title,
 	            definitions: mappedDefinitions
-	        };
-	        var payload = {
-	            rowIndex: this.rowIndex,
-	            newQuizletterm: editedTerm
 	        };
 	        this._store.dispatch({ type: store_actions_1.StoreActions.UPDATE_QUIZLETTERM.toString(), payload: payload });
 	    };
@@ -1890,7 +1910,7 @@ webpackJsonp([0],{
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var store_actions_1 = __webpack_require__(336);
+	var store_actions_1 = __webpack_require__(335);
 	exports.quizletterm = function (state, _a) {
 	    if (state === void 0) { state = []; }
 	    var type = _a.type, payload = _a.payload;
@@ -1898,9 +1918,11 @@ webpackJsonp([0],{
 	        case store_actions_1.StoreActions.ADD_QUIZLETTERM.toString():
 	            return state.concat([payload]);
 	        case store_actions_1.StoreActions.UPDATE_QUIZLETTERM.toString():
-	            var newState = state.slice(0); //Copy the array - Imutable Proramming
-	            newState[payload.rowIndex] = payload.newQuizletterm;
-	            return newState;
+	            return state.map(function (term) {
+	                return term.id === payload.id ? Object.assign({}, term, payload) : term;
+	            });
+	        case store_actions_1.StoreActions.DELETE_QUIZLETTERMS.toString():
+	            return [];
 	        default:
 	            return state;
 	    }
