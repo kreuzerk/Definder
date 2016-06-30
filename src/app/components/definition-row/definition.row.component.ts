@@ -65,4 +65,10 @@ export class DefinitionRowComponent implements AfterViewInit{
   private _isTabKey(keyCode: number){
     return keyCode === this.TAB_KEYCODE;
   }
+
+  resetRow(): void{
+    this.definitions = null;
+    this.inputField.nativeElement.value = '';
+  }
+
 }

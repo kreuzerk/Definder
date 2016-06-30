@@ -14,8 +14,8 @@ import {DefinitionListComponent} from "./components/definition-list/definition.l
 		<navbar-cmp></navbar-cmp>
 	</div>
 	<div *ngIf="quizletService.accessToken" class="container-fluid">
-			<definition-list></definition-list>
-			<completion-cmp></completion-cmp>
+			<definition-list #defList></definition-list>
+			<completion-cmp (onClear)="defList.resetDefinitions()"></completion-cmp>
 	</div>
 	<div *ngIf="!quizletService.accessToken" class="center">
 		<h1>Welcome to the Definder</h1>
@@ -34,5 +34,4 @@ import {DefinitionListComponent} from "./components/definition-list/definition.l
 export class App {
 
 	constructor(private _store: Store<QuizletStore>, public quizletService: QuizletService){}
-
 }

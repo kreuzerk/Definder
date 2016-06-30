@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, EventEmitter, Output} from '@angular/core';
 import {FormBuilder, ControlGroup, Control, Validators} from '@angular/common';
 
 import {QuizletService} from "../../service/quizlet.service";
@@ -11,6 +11,10 @@ import {QuizletService} from "../../service/quizlet.service";
       <button class="btn btn-primary" type="submit" [disabled]="!completionForm.valid">
         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
         Create Set on Quizlet
+      </button>
+      <button class="btn btn-danger" type="button" (click)="clearSet()">
+        <span class="glyphicon glyphicon-file" aria-hidden="true"></span>
+        Clear Set
       </button>
       <div *ngIf="setName.dirty && setName.hasError('required')">
         A auth Code is required
@@ -45,6 +49,7 @@ export class CompletionComponent{
   showSuccessMessage: boolean = false;
   showFailureMessage: boolean = false;
   errorMessage: string = '';
+  @Output() onClear = new EventEmitter<boolean>();
 
   constructor(private _fb: FormBuilder, private _quizletService: QuizletService){
     this.setName = _fb.control('', Validators.required);
@@ -54,6 +59,8 @@ export class CompletionComponent{
   }
 
   createSet(): void{
+    this.setName.updateValue('');
+    this.setName.setErrors(null);
     this._quizletService.createSet(this.setName.value)
       .subscribe(response => {
         if(201 === response.status){
@@ -81,5 +88,9 @@ export class CompletionComponent{
       this.showFailureMessage = false;
       this.errorMessage = '';
     }, 2000)
+  }
+
+  clearSet(): void{
+    this.onClear.emit(true);
   }
 }
