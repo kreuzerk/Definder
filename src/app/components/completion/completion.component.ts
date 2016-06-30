@@ -17,7 +17,7 @@ import {QuizletService} from "../../service/quizlet.service";
         Clear Set
       </button>
       <div *ngIf="setName.dirty && setName.hasError('required')">
-        A auth Code is required
+        A Setname is required
       </div>
       <div *ngIf="showSuccessMessage" class="alert alert-success" role="alert">
         New Set "{{setName.value}}" successfully added to Quizlet
@@ -59,9 +59,7 @@ export class CompletionComponent{
   }
 
   createSet(): void{
-    this.setName.updateValue('');
-    this.setName.setErrors(null);
-    this._quizletService.createSet(this.setName.value);
+    this._quizletService.createSet(this.setName.value)
       .subscribe(response => {
         if(201 === response.status){
           this._toggleSuccessMessage();
@@ -72,6 +70,11 @@ export class CompletionComponent{
         this._toggleFailureMessage(jsonBody.error_description);
       }
     );
+  }
+
+  private _restetInputs():void {
+    this.setName.updateValue('');
+    this.setName.setErrors(null);
   }
 
   private _toggleSuccessMessage(): void{
