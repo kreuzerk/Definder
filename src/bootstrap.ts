@@ -6,7 +6,7 @@ import {provideStore} from '@ngrx/store';
 
 import {App} from './app/app';
 import {QuizletService} from './app/service/quizlet.service';
-import {quizletterm} from './app/reducers/quizletterm.reducer';;
+import {quizletterm} from './app/reducers/quizletterm.reducer';
 
 import 'core-js/es6';
 import 'core-js/es7/reflect';

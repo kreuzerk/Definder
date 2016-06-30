@@ -44,17 +44,19 @@ export class DefinitionRowComponent implements AfterViewInit{
   proccesKeyStroke(event){
     if(this._isTabKey(event.keyCode)){
       this.onTabKey.emit(true);
-      DefinitionRowComponent.rowCounter++;
       this.definitions = this._getDefinition(this.inputField.nativeElement.value);
+      let counter = DefinitionRowComponent.rowCounter;
       this.definitions.subscribe((res) => {
         let definitions = res.map(response => response.senses)
           .map(senses => senses[0].definition);
         let payload: Quizletterm = {
+          id: counter,
           word: this.inputField.nativeElement.value,
           definitions: definitions
         }
         this._store.dispatch({type: StoreActions.ADD_QUIZLETTERM.toString(), payload});
       });
+      DefinitionRowComponent.rowCounter++;
     }
   }
 
@@ -65,10 +67,4 @@ export class DefinitionRowComponent implements AfterViewInit{
   private _isTabKey(keyCode: number){
     return keyCode === this.TAB_KEYCODE;
   }
-
-  resetRow(): void{
-    this.definitions = null;
-    this.inputField.nativeElement.value = '';
-  }
-
 }

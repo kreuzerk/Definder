@@ -1,11 +1,14 @@
-import {Component, OnInit, ViewChild, ElementRef} from '@angular/core';
+import {StoreActions} from "../../actions/store.actions";
+import {QuizletStore} from "../../model/quizletstore.model";
+import {Store} from "@ngrx/store";
+import {Component, OnInit, ElementRef} from '@angular/core';
 import {DefinitionRowComponent} from '../definition-row/definition.row.component';
 
 @Component({
   selector: 'definition-list',
   template: `
-    <div class="row" *ngFor="#defintion of definitons">
-      <definition-row #definitionRow (onTabKey)="incrementDefinitionsLength()"></definition-row>
+    <div class="row" *ngFor="#defintion of definitons, let i = index">
+      <definition-row *ngIf="i >= rowsToDisplay"(onTabKey)="incrementDefinitionsLength()"></definition-row>
     </div>
   `,
   directives: [DefinitionRowComponent]
@@ -13,7 +16,9 @@ import {DefinitionRowComponent} from '../definition-row/definition.row.component
 export class DefinitionListComponent implements OnInit{
 
   definitons: Array<any> = [];
-  @ViewChild('definitionRow') definitionRow: ElementRef;
+  rowsToDisplay: number = 0;
+
+  constructor(private _store: Store<QuizletStore>){}
 
   ngOnInit(): void{
     this.definitons.length = 1;
@@ -24,7 +29,8 @@ export class DefinitionListComponent implements OnInit{
   }
 
   resetDefinitions(){
-    this.definitons.length = 1;
-    this.definitionRow.resetRow();
+    this.rowsToDisplay = this.definitons.length - 1;
+    let payload = undefined;
+    this._store.dispatch({type: StoreActions.DELETE_QUIZLETTERMS.toString(), payload});
   }
 }

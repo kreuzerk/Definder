@@ -67,7 +67,7 @@ export class DefinitionPanelComponent{
     };
 
     let payload = {
-      rowIndex: this.rowIndex,
+      id: this.rowIndex,
       newQuizletterm: editedTerm
     }
     this._store.dispatch({type: StoreActions.UPDATE_QUIZLETTERM.toString(), payload});

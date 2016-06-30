@@ -61,7 +61,7 @@ export class CompletionComponent{
   createSet(): void{
     this.setName.updateValue('');
     this.setName.setErrors(null);
-    this._quizletService.createSet(this.setName.value)
+    this._quizletService.createSet(this.setName.value);
       .subscribe(response => {
         if(201 === response.status){
           this._toggleSuccessMessage();
