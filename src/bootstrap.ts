@@ -1,3 +1,4 @@
+import {ModeService} from "./app/service/mode.service";
 import {bootstrap} from '@angular/platform-browser-dynamic';
 import {provide, ReflectiveInjector} from '@angular/core';
 import {HTTP_PROVIDERS, Request, XSRFStrategy} from '@angular/http';
@@ -25,6 +26,7 @@ export function main() {
 		HTTP_PROVIDERS,
 		XRSF_MOCK,
 		QuizletService,
+    ModeService,
 		provideStore({quizletterm})
 	])
 	.catch(err => console.error(err));

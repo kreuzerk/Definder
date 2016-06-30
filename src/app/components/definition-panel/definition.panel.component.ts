@@ -1,3 +1,4 @@
+import {ModeService} from "../../service/mode.service";
 import {Store} from "@ngrx/store";
 import {Component, Input} from '@angular/core';
 import {Quizletterm} from "../../model/quizletterm.model";
@@ -35,7 +36,11 @@ export class DefinitionPanelComponent{
   @Input() rowIndex: number;
   image: string = 'build/' + require('./trash-icon.png');
 
-  constructor(private _store: Store<QuizletStore>){}
+  constructor(private _store: Store<QuizletStore>, private _modeService: ModeService){
+    this._modeService.modeStream.subscribe((isMode) => {
+      console.log('In the Panel, mode is on', isMode);
+    })
+  }
 
   deleteDefinition(index: number): void{
     this.definitions.splice(index, 1);

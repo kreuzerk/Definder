@@ -1,3 +1,4 @@
+import {ModeService} from "../../service/mode.service";
 import {Component} from '@angular/core';
 
 @Component({
@@ -28,7 +29,10 @@ import {Component} from '@angular/core';
 export class ToggleComponent{
   isModeOn: boolean = false;
 
+  constructor(private _modeService: ModeService){}
+
   toggle(): void{
     this.isModeOn = !this.isModeOn;
+    this._modeService.changeMode(this.isModeOn);
   }
 }
