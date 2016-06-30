@@ -32,19 +32,32 @@ import {StoreActions} from "../../actions/store.actions";
 export class DefinitionPanelComponent{
 
   @Input() definitions: any;
+  @Input('definitions') _internalDefinitions: any;
   @Input() title: string;
   @Input() rowIndex: number;
   image: string = 'build/' + require('./trash-icon.png');
 
   constructor(private _store: Store<QuizletStore>, private _modeService: ModeService){
     this._modeService.modeStream.subscribe((isMode) => {
-      console.log('In the Panel, mode is on', isMode);
+      if(this.definitions){
+        if(isMode){
+          this.definitions = this.definitions.filter(definition => definition.headword === this.title);
+        }
+        else{
+          this.definitions = this._internalDefinitions;
+        }
+        this._updateDefinition();
+      }
     })
   }
 
   deleteDefinition(index: number): void{
     this.definitions.splice(index, 1);
+    this._internalDefinitions = this.definitions;
+    this._updateDefinition();
+  }
 
+  private _updateDefinition(){
     let mappedDefinitions = this.definitions.map(definition => definition.senses)
       .map(senses => senses[0].definition);
 
