@@ -1,6 +1,6 @@
 import {ModeService} from "../../service/mode.service";
 import {Store} from "@ngrx/store";
-import {Component, Input} from '@angular/core';
+import {Component, Input, Output, EventEmitter} from '@angular/core';
 import {Quizletterm} from "../../model/quizletterm.model";
 import {QuizletStore} from "../../model/quizletstore.model";
 import {StoreActions} from "../../actions/store.actions";
@@ -35,6 +35,7 @@ export class DefinitionPanelComponent{
   @Input('definitions') _internalDefinitions: any;
   @Input() title: string;
   @Input() rowIndex: number;
+  @Output() onLastDefDeleted = new EventEmitter<boolean>();
   image: string = 'build/' + require('./trash-icon.png');
 
   constructor(private _store: Store<QuizletStore>, private _modeService: ModeService){
@@ -53,8 +54,13 @@ export class DefinitionPanelComponent{
 
   deleteDefinition(index: number): void{
     this.definitions.splice(index, 1);
-    this._internalDefinitions = this.definitions;
-    this._updateDefinition();
+    if(this.definitions.length === 0){
+      this.onLastDefDeleted.emit(true);
+    }
+    else{
+      this._internalDefinitions = this.definitions;
+      this._updateDefinition();
+    }
   }
 
   private _updateDefinition(){
