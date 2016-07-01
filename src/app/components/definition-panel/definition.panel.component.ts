@@ -31,6 +31,7 @@ import {StoreActions} from "../../actions/store.actions";
 })
 export class DefinitionPanelComponent{
 
+  @Input() definitionsStream: any;
   @Input() definitions: any;
   @Input('definitions') _internalDefinitions: any;
   @Input() title: string;
