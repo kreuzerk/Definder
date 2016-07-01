@@ -14,6 +14,9 @@ import {DictionaryService} from "../../service/dictionary.service";
 @Component({
   selector: 'definition-row',
   template: `
+      <div *ngIf="showFailureMessage" class="alert alert-danger" role="alert">
+        Do not delete empty things!! Please search for a word before deleting
+      </div>
       <div class="col-lg-4">
         <input #inputField class="form-control" type="text" (keydown)="proccesKeyStroke($event)"/>
       </div>
@@ -30,6 +33,9 @@ import {DictionaryService} from "../../service/dictionary.service";
     img{
       margin-top: 20px;
     }
+    .alert{
+      margin: 20px;
+    }
   `]
 })
 export class DefinitionRowComponent implements AfterViewInit{
@@ -40,9 +46,10 @@ export class DefinitionRowComponent implements AfterViewInit{
   definitions: Observable<Response>;
   @ViewChild('inputField') inputField: ElementRef;
   image: string = './build/' + require('./trash-icon.png');
+  showFailureMessage: boolean = false;
 
   constructor(private _dictionaryService: DictionaryService, private _renderer: Renderer,
-    private _store: Store<QuizletStore>){
+    private _store: Store<QuizletStore>, private _row: ElementRef){
       this.rowIndex = DefinitionRowComponent.rowCounter;
   }
 
@@ -79,7 +86,17 @@ export class DefinitionRowComponent implements AfterViewInit{
 
   deleteRow(): void{
     if(!this.definitions){
-      console.log('You can not delete this row');
+      this._showErrorMessage();
     }
+    else{
+      this._row.nativeElement.hidden = true;
+    }
+  }
+
+  private _showErrorMessage(): void{
+    this.showFailureMessage = true;
+    setTimeout(() => {
+      this.showFailureMessage = false;
+    }, 2500);
   }
 }
