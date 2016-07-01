@@ -19,6 +19,9 @@ import {StoreActions} from "../../actions/store.actions";
           <b>{{definition.headword}}</b>
           {{definition.senses[0].definition}}
         </li>
+        <div *ngIf="showFailureMessage" class="alert alert-danger" role="alert">
+          An unexpected error occured
+        </div>
       </ul>
     </div>
   </div>
@@ -38,6 +41,7 @@ export class DefinitionPanelComponent implements AfterViewInit{
   definitions: any;
   private _internalDefinitions: any;
   private isModeOn: boolean;
+  showFailureMessage: boolean = false;
 
   image: string = 'build/' + require('./trash-icon.png');
 
@@ -54,8 +58,19 @@ export class DefinitionPanelComponent implements AfterViewInit{
         this.definitions = definitions;
         this._internalDefinitions = definitions;
         this._filterDefinitions();
-      });
+      },
+      (error) => {
+        this.showFailureMessage = true;
+        this._showFailuerForTime();
+      }
+    );
     })
+  }
+
+  private _showFailuerForTime(): void {
+    setTimeout(() => {
+      this.showFailureMessage = false;
+    }, 2500);
   }
 
   private _filterDefinitions(): void{
