@@ -47,6 +47,7 @@ export class DefinitionRowComponent implements AfterViewInit{
   @ViewChild('inputField') inputField: ElementRef;
   image: string = './build/' + require('./trash-icon.png');
   showFailureMessage: boolean = false;
+  private internalCounter: number;
 
   constructor(private _dictionaryService: DictionaryService, private _renderer: Renderer,
     private _store: Store<QuizletStore>, private _row: ElementRef){
@@ -61,12 +62,12 @@ export class DefinitionRowComponent implements AfterViewInit{
     if(this._isTabKey(event.keyCode)){
       this.onTabKey.emit(true);
       this.definitions = this._getDefinition(this.inputField.nativeElement.value);
-      let counter = DefinitionRowComponent.rowCounter;
+      this.internalCounter = DefinitionRowComponent.rowCounter;
       this.definitions.subscribe((res) => {
         let definitions = res.map(response => response.senses)
           .map(senses => senses[0].definition);
         let payload: Quizletterm = {
-          id: counter,
+          id: this.internalCounter,
           word: this.inputField.nativeElement.value,
           definitions: definitions
         }
@@ -90,6 +91,10 @@ export class DefinitionRowComponent implements AfterViewInit{
     }
     else{
       this._row.nativeElement.hidden = true;
+      this._store.dispatch({
+        type: StoreActions.DELETE_QUIZLETTERM.toString(),
+        payload: this.internalCounter
+      });
     }
   }
 

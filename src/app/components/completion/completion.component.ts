@@ -60,16 +60,16 @@ export class CompletionComponent{
 
   createSet(): void{
     this._quizletService.createSet(this.setName.value)
-      .subscribe(response => {
-        if(201 === response.status){
-          this._toggleSuccessMessage();
-        }
-      },
-      (err) => {
-        let jsonBody = JSON.parse(err._body);
-        this._toggleFailureMessage(jsonBody.error_description);
-      }
-    );
+    //   .subscribe(response => {
+    //     if(201 === response.status){
+    //       this._toggleSuccessMessage();
+    //     }
+    //   },
+    //   (err) => {
+    //     let jsonBody = JSON.parse(err._body);
+    //     this._toggleFailureMessage(jsonBody.error_description);
+    //   }
+    // );
   }
 
   private _restetInputs():void {

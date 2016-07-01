@@ -11,6 +11,8 @@ export const quizletterm = (state: Array<Quizletterm> = [], {type, payload}) => 
 
     case StoreActions.DELETE_QUIZLETTERMS.toString():
       return [];
+    case StoreActions.DELETE_QUIZLETTERM.toString():
+      return state.filter(state => state.id != payload);
     default:
       return state;
   }
