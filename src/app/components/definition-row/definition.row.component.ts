@@ -1,7 +1,7 @@
 import {Store} from "@ngrx/store";
 import {Response} from '@angular/http';
 import {Component, OnInit, EventEmitter, Output, ViewChild, ElementRef, AfterViewInit, Renderer} from '@angular/core';
-import {Observable} from "rxjs/Observable";
+import {Observable, Subject} from "rxjs";
 import 'rxjs/add/operator/map';
 
 import {StoreActions} from "../../actions/store.actions";
@@ -22,7 +22,7 @@ import {DictionaryService} from "../../service/dictionary.service";
       </div>
       <div class="col-lg-7">
         <definition-panel [rowIndex]="rowIndex" [title]="inputField.value"
-        [definitions]="definitions | async" (onLastDefDeleted)="deleteRow()"></definition-panel>
+          [definitionsStream]="definitionsStream" (onLastDefDeleted)="deleteRow()"></definition-panel>
       </div>
       <div class="col-lg-1 text-center">
         <img [src]="image" (click)="deleteRow()"/>
@@ -49,6 +49,7 @@ export class DefinitionRowComponent implements AfterViewInit{
   image: string = './build/' + require('./trash-icon.png');
   showFailureMessage: boolean = false;
   private internalCounter: number;
+  definitionsStream: Subject<Observable<Response>> = new Subject<Observable<Response>>();
 
   constructor(private _dictionaryService: DictionaryService, private _renderer: Renderer,
     private _store: Store<QuizletStore>, private _row: ElementRef){
@@ -63,6 +64,7 @@ export class DefinitionRowComponent implements AfterViewInit{
     if(this._isTabKey(event.keyCode)){
       this.onTabKey.emit(true);
       this.definitions = this._getDefinition(this.inputField.nativeElement.value);
+      this.definitionsStream.next(this.definitions);
       this.internalCounter = DefinitionRowComponent.rowCounter;
       this.definitions.subscribe((res) => {
         let definitions = res.map(response => response.senses)

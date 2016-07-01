@@ -16,7 +16,7 @@ export class QuizletService{
     client_sectet: 'y2xrd9CVS3VYdHn9kTE6e2'
   }
   private basicAuth = 'Basic cFFFQW1RMzN3Tjp5MnhyZDlDVlMzVllkSG45a1RFNmUy';
-  accessToken: string = 'devMode';
+  accessToken: string;
   private quizletterms: Array<Quizletterm>;
 
   constructor(private _http: Http, private _store: Store<QuizletStore>){

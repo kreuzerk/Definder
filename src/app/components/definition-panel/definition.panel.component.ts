@@ -1,6 +1,6 @@
 import {ModeService} from "../../service/mode.service";
 import {Store} from "@ngrx/store";
-import {Component, Input, Output, EventEmitter} from '@angular/core';
+import {Component, Input, Output, EventEmitter, AfterViewInit} from '@angular/core';
 import {Quizletterm} from "../../model/quizletterm.model";
 import {QuizletStore} from "../../model/quizletstore.model";
 import {StoreActions} from "../../actions/store.actions";
@@ -29,28 +29,45 @@ import {StoreActions} from "../../actions/store.actions";
     }
     `]
 })
-export class DefinitionPanelComponent{
+export class DefinitionPanelComponent implements AfterViewInit{
 
   @Input() definitionsStream: any;
-  @Input() definitions: any;
-  @Input('definitions') _internalDefinitions: any;
   @Input() title: string;
   @Input() rowIndex: number;
   @Output() onLastDefDeleted = new EventEmitter<boolean>();
+  definitions: any;
+  private _internalDefinitions: any;
+  private isModeOn: boolean;
+
   image: string = 'build/' + require('./trash-icon.png');
 
   constructor(private _store: Store<QuizletStore>, private _modeService: ModeService){
     this._modeService.modeStream.subscribe((isMode) => {
-      if(this.definitions){
-        if(isMode){
-          this.definitions = this.definitions.filter(definition => definition.headword === this.title);
-        }
-        else{
-          this.definitions = this._internalDefinitions;
-        }
-        this._updateDefinition();
-      }
+      this.isModeOn = isMode;
+      this._filterDefinitions();
     })
+  }
+
+  ngAfterViewInit():void {
+    this.definitionsStream.subscribe(defObservable => {
+      defObservable.subscribe(definitions => {
+        this.definitions = definitions;
+        this._internalDefinitions = definitions;
+        this._filterDefinitions();
+      });
+    })
+  }
+
+  private _filterDefinitions(): void{
+    if(this.definitions){
+      if(this.isModeOn){
+        this.definitions = this.definitions.filter(definition => definition.headword === this.title);
+      }
+      else{
+        this.definitions = this._internalDefinitions;
+      }
+      this._updateDefinition();
+    }
   }
 
   deleteDefinition(index: number): void{
