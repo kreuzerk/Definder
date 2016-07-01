@@ -1,11 +1,11 @@
-import {Subject} from "rxjs/Subject";
+import {Subject, BehaviorSubject} from 'rxjs';
+
 
 export class ModeService{
 
-  public modeStream: Subject<boolean> = new Subject<boolean>();
+  public modeStream: Subject<boolean> = new BehaviorSubject<boolean>(false);
 
   changeMode(isMatchMode: boolean): void {
-    console.log('Hier', isMatchMode);
     this.modeStream.next(isMatchMode);
   }
 }
