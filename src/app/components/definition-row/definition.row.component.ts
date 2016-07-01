@@ -21,7 +21,8 @@ import {DictionaryService} from "../../service/dictionary.service";
         <input #inputField class="form-control" type="text" (keydown)="proccesKeyStroke($event)"/>
       </div>
       <div class="col-lg-7">
-        <definition-panel [rowIndex]="rowIndex" [title]="inputField.value" [definitions]="definitions | async"></definition-panel>
+        <definition-panel [rowIndex]="rowIndex" [title]="inputField.value"
+        [definitions]="definitions | async" (onLastDefDeleted)="deleteRow()"></definition-panel>
       </div>
       <div class="col-lg-1 text-center">
         <img [src]="image" (click)="deleteRow()"/>

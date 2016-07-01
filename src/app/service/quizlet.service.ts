@@ -47,12 +47,10 @@ export class QuizletService{
     headers.append('Authorization', 'Bearer ' + this.accessToken);
     let termsAndDefinitions: string = this._getTermsAndDefinitions();
 
-    console.log('Quizletterm', this.quizletterms);
-
-    // return this._http.post('https://api.quizlet.com/2.0/sets?' + 'whitespace=1&title=' + title +
-    // termsAndDefinitions + '&lang_terms=en&lang_definitions=en',
-    //   '', {headers: headers}
-    // );
+    return this._http.post('https://api.quizlet.com/2.0/sets?' + 'whitespace=1&title=' + title +
+    termsAndDefinitions + '&lang_terms=en&lang_definitions=en',
+      '', {headers: headers}
+    );
   }
 
   private _getTermsAndDefinitions(): string {
