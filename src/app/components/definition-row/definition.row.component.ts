@@ -17,12 +17,20 @@ import {DictionaryService} from "../../service/dictionary.service";
       <div class="col-lg-4">
         <input #inputField class="form-control" type="text" (keydown)="proccesKeyStroke($event)"/>
       </div>
-      <div class="col-lg-8">
+      <div class="col-lg-7">
         <definition-panel [rowIndex]="rowIndex" [title]="inputField.value" [definitions]="definitions | async"></definition-panel>
+      </div>
+      <div class="col-lg-1 text-center">
+        <img [src]="image" (click)="deleteRow()"/>
       </div>
   `,
   directives: [DefinitionPanelComponent],
-  providers: [DictionaryService]
+  providers: [DictionaryService],
+  styles:[`
+    img{
+      margin-top: 20px;
+    }
+  `]
 })
 export class DefinitionRowComponent implements AfterViewInit{
   rowIndex: number;
@@ -31,6 +39,7 @@ export class DefinitionRowComponent implements AfterViewInit{
   @Output() onTabKey = new EventEmitter<boolean>();
   definitions: Observable<Response>;
   @ViewChild('inputField') inputField: ElementRef;
+  image: string = './build/' + require('./trash-icon.png');
 
   constructor(private _dictionaryService: DictionaryService, private _renderer: Renderer,
     private _store: Store<QuizletStore>){
@@ -66,5 +75,11 @@ export class DefinitionRowComponent implements AfterViewInit{
 
   private _isTabKey(keyCode: number){
     return keyCode === this.TAB_KEYCODE;
+  }
+
+  deleteRow(): void{
+    if(!this.definitions){
+      console.log('You can not delete this row');
+    }
   }
 }
