@@ -18,7 +18,8 @@ import {DictionaryService} from "../../service/dictionary.service";
         Do not delete empty things!! Please search for a word before deleting
       </div>
       <div class="col-lg-4">
-        <input #inputField class="form-control" type="text" (keydown)="proccesKeyStroke($event)"/>
+        <input #inputField class="form-control" type="text" (keydown)="proccesKeyStroke($event)"
+          placeholder="Enter your word here"/>
       </div>
       <div class="col-lg-7">
         <definition-panel [rowIndex]="rowIndex" [title]="inputField.value"
@@ -65,17 +66,6 @@ export class DefinitionRowComponent implements AfterViewInit{
       this.onTabKey.emit(true);
       this.definitions = this._getDefinition(this.inputField.nativeElement.value);
       this.definitionsStream.next(this.definitions);
-      this.internalCounter = DefinitionRowComponent.rowCounter;
-      this.definitions.subscribe((res) => {
-        let definitions = res.map(response => response.senses)
-          .map(senses => senses[0].definition);
-        let payload: Quizletterm = {
-          id: this.internalCounter,
-          word: this.inputField.nativeElement.value,
-          definitions: definitions
-        }
-        this._store.dispatch({type: StoreActions.ADD_QUIZLETTERM.toString(), payload});
-      });
       DefinitionRowComponent.rowCounter++;
     }
   }

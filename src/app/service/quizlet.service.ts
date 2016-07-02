@@ -16,7 +16,7 @@ export class QuizletService{
     client_sectet: 'y2xrd9CVS3VYdHn9kTE6e2'
   }
   private basicAuth = 'Basic cFFFQW1RMzN3Tjp5MnhyZDlDVlMzVllkSG45a1RFNmUy';
-  accessToken: string;
+  accessToken: string = 'devMode';
   private quizletterms: Array<Quizletterm>;
 
   constructor(private _http: Http, private _store: Store<QuizletStore>){
@@ -47,10 +47,12 @@ export class QuizletService{
     headers.append('Authorization', 'Bearer ' + this.accessToken);
     let termsAndDefinitions: string = this._getTermsAndDefinitions();
 
-    return this._http.post('https://api.quizlet.com/2.0/sets?' + 'whitespace=1&title=' + title +
-    termsAndDefinitions + '&lang_terms=en&lang_definitions=en',
-      '', {headers: headers}
-    );
+    console.log('Quizletterms', this.quizletterms);
+
+    // return this._http.post('https://api.quizlet.com/2.0/sets?' + 'whitespace=1&title=' + title +
+    // termsAndDefinitions + '&lang_terms=en&lang_definitions=en',
+    //   '', {headers: headers}
+    // );
   }
 
   private _getTermsAndDefinitions(): string {
