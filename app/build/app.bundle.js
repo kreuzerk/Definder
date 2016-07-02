@@ -17374,6 +17374,7 @@ webpackJsonp([0],[
 	        this._row = _row;
 	        this.TAB_KEYCODE = 9;
 	        this.onTabKey = new core_1.EventEmitter();
+	        this.definitions = null;
 	        this.image = './build/' + __webpack_require__(640);
 	        this.showFailureMessage = false;
 	        this.definitionsStream = new rxjs_1.Subject();
@@ -17383,23 +17384,13 @@ webpackJsonp([0],[
 	        this.inputField.nativeElement.focus();
 	    };
 	    DefinitionRowComponent.prototype.proccesKeyStroke = function (event) {
-	        var _this = this;
 	        if (this._isTabKey(event.keyCode)) {
-	            this.onTabKey.emit(true);
+	            if (this.definitions === null) {
+	                this.onTabKey.emit(true);
+	                DefinitionRowComponent.rowCounter++;
+	            }
 	            this.definitions = this._getDefinition(this.inputField.nativeElement.value);
 	            this.definitionsStream.next(this.definitions);
-	            this.internalCounter = DefinitionRowComponent.rowCounter;
-	            this.definitions.subscribe(function (res) {
-	                var definitions = res.map(function (response) { return response.senses; })
-	                    .map(function (senses) { return senses[0].definition; });
-	                var payload = {
-	                    id: _this.internalCounter,
-	                    word: _this.inputField.nativeElement.value,
-	                    definitions: definitions
-	                };
-	                _this._store.dispatch({ type: store_actions_1.StoreActions.ADD_QUIZLETTERM.toString(), payload: payload });
-	            });
-	            DefinitionRowComponent.rowCounter++;
 	        }
 	    };
 	    DefinitionRowComponent.prototype._getDefinition = function (word) {
@@ -17416,7 +17407,7 @@ webpackJsonp([0],[
 	            this._row.nativeElement.hidden = true;
 	            this._store.dispatch({
 	                type: store_actions_1.StoreActions.DELETE_QUIZLETTERM.toString(),
-	                payload: this.internalCounter
+	                payload: this.rowIndex
 	            });
 	        }
 	    };
@@ -17439,7 +17430,7 @@ webpackJsonp([0],[
 	    DefinitionRowComponent = __decorate([
 	        core_1.Component({
 	            selector: 'definition-row',
-	            template: "\n      <div *ngIf=\"showFailureMessage\" class=\"alert alert-danger\" role=\"alert\">\n        Do not delete empty things!! Please search for a word before deleting\n      </div>\n      <div class=\"col-lg-4\">\n        <input #inputField class=\"form-control\" type=\"text\" (keydown)=\"proccesKeyStroke($event)\"/>\n      </div>\n      <div class=\"col-lg-7\">\n        <definition-panel [rowIndex]=\"rowIndex\" [title]=\"inputField.value\"\n          [definitionsStream]=\"definitionsStream\" (onLastDefDeleted)=\"deleteRow()\"></definition-panel>\n      </div>\n      <div class=\"col-lg-1 text-center\">\n        <img [src]=\"image\" (click)=\"deleteRow()\"/>\n      </div>\n  ",
+	            template: "\n      <div *ngIf=\"showFailureMessage\" class=\"alert alert-danger\" role=\"alert\">\n        Do not delete empty things!! Please search for a word before deleting\n      </div>\n      <div class=\"col-lg-4\">\n        <input #inputField class=\"form-control\" type=\"text\" (keydown)=\"proccesKeyStroke($event)\"\n          placeholder=\"Enter your word here\"/>\n      </div>\n      <div class=\"col-lg-7\">\n        <definition-panel [rowIndex]=\"rowIndex\" [title]=\"inputField.value\"\n          [definitionsStream]=\"definitionsStream\" (onLastDefDeleted)=\"deleteRow()\"></definition-panel>\n      </div>\n      <div class=\"col-lg-1 text-center\">\n        <img [src]=\"image\" (click)=\"deleteRow()\"/>\n      </div>\n  ",
 	            directives: [definition_panel_component_1.DefinitionPanelComponent],
 	            providers: [dictionary_service_1.DictionaryService],
 	            styles: ["\n    img{\n      margin-top: 20px;\n    }\n    .alert{\n      margin: 20px;\n    }\n  "]
@@ -17475,6 +17466,8 @@ webpackJsonp([0],[
 	        this._store = _store;
 	        this._modeService = _modeService;
 	        this.onLastDefDeleted = new core_1.EventEmitter();
+	        this.showFailureMessage = false;
+	        this.isPanelTouched = false;
 	        this.image = 'build/' + __webpack_require__(638);
 	        this._modeService.modeStream.subscribe(function (isMode) {
 	            _this.isModeOn = isMode;
@@ -17487,9 +17480,39 @@ webpackJsonp([0],[
 	            defObservable.subscribe(function (definitions) {
 	                _this.definitions = definitions;
 	                _this._internalDefinitions = definitions;
+	                if (!_this.isPanelTouched) {
+	                    _this._addDefinitionsToStore(definitions);
+	                }
+	                else {
+	                    _this._updateDefinition();
+	                }
 	                _this._filterDefinitions();
+	            }, function (error) {
+	                _this.showFailureMessage = true;
+	                _this._showFailuerForTime();
 	            });
 	        });
+	    };
+	    DefinitionPanelComponent.prototype._handleError = function (error) {
+	        this.showFailureMessage = true;
+	        this._showFailuerForTime();
+	    };
+	    DefinitionPanelComponent.prototype._addDefinitionsToStore = function (definitions) {
+	        this.isPanelTouched = true;
+	        var mappedDefinitions = definitions.map(function (response) { return response.senses; })
+	            .map(function (senses) { return senses[0].definition; });
+	        var payload = {
+	            id: this.rowIndex,
+	            word: this.title,
+	            definitions: mappedDefinitions
+	        };
+	        this._store.dispatch({ type: store_actions_1.StoreActions.ADD_QUIZLETTERM.toString(), payload: payload });
+	    };
+	    DefinitionPanelComponent.prototype._showFailuerForTime = function () {
+	        var _this = this;
+	        setTimeout(function () {
+	            _this.showFailureMessage = false;
+	        }, 2500);
 	    };
 	    DefinitionPanelComponent.prototype._filterDefinitions = function () {
 	        var _this = this;
@@ -17542,7 +17565,7 @@ webpackJsonp([0],[
 	    DefinitionPanelComponent = __decorate([
 	        core_1.Component({
 	            selector: 'definition-panel',
-	            template: "\n  <div class=\"panel panel-primary\">\n    <div class=\"panel-heading\">\n      <h3 class=\"panel-title\" *ngIf=\"title\">Search Results for {{ title }}</h3>\n    </div>\n    <div class=\"panel-body\">\n      <ul>\n        <li *ngFor=\"let definition of definitions; let i = index\">\n        <img [src]=\"image\" (click)=\"deleteDefinition(i)\"/>\n          <b>{{definition.headword}}</b>\n          {{definition.senses[0].definition}}\n        </li>\n      </ul>\n    </div>\n  </div>\n  ",
+	            template: "\n  <div class=\"panel panel-primary\">\n    <div class=\"panel-heading\">\n      <h3 class=\"panel-title\" *ngIf=\"title\">Search Results for {{ title }}</h3>\n    </div>\n    <div class=\"panel-body\">\n      <ul>\n        <li *ngFor=\"let definition of definitions; let i = index\">\n        <img [src]=\"image\" (click)=\"deleteDefinition(i)\"/>\n          <b>{{definition.headword}}</b>\n          {{definition.senses[0].definition}}\n        </li>\n        <div *ngIf=\"showFailureMessage\" class=\"alert alert-danger\" role=\"alert\">\n          An unexpected error occured\n        </div>\n      </ul>\n    </div>\n  </div>\n  ",
 	            styles: ["\n    ul{\n      list-style-type: none;\n    }\n    "]
 	        }), 
 	        __metadata('design:paramtypes', [store_1.Store, mode_service_1.ModeService])
@@ -17616,6 +17639,7 @@ webpackJsonp([0],[
 	        case store_actions_1.StoreActions.DELETE_QUIZLETTERMS.toString():
 	            return [];
 	        case store_actions_1.StoreActions.DELETE_QUIZLETTERM.toString():
+	            console.log('Hier', payload);
 	            return state.filter(function (state) { return state.id != payload; });
 	        default:
 	            return state;

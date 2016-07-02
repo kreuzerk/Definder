@@ -49,7 +49,6 @@ export class DefinitionRowComponent implements AfterViewInit{
   @ViewChild('inputField') inputField: ElementRef;
   image: string = './build/' + require('./trash-icon.png');
   showFailureMessage: boolean = false;
-  private internalCounter: number;
   definitionsStream: Subject<Observable<Response>> = new Subject<Observable<Response>>();
 
   constructor(private _dictionaryService: DictionaryService, private _renderer: Renderer,
@@ -65,10 +64,10 @@ export class DefinitionRowComponent implements AfterViewInit{
     if(this._isTabKey(event.keyCode)){
       if(this.definitions === null){
         this.onTabKey.emit(true);
+        DefinitionRowComponent.rowCounter++;
       }
       this.definitions = this._getDefinition(this.inputField.nativeElement.value);
       this.definitionsStream.next(this.definitions);
-      DefinitionRowComponent.rowCounter++;
     }
   }
 
@@ -88,7 +87,7 @@ export class DefinitionRowComponent implements AfterViewInit{
       this._row.nativeElement.hidden = true;
       this._store.dispatch({
         type: StoreActions.DELETE_QUIZLETTERM.toString(),
-        payload: this.internalCounter
+        payload: this.rowIndex
       });
     }
   }
