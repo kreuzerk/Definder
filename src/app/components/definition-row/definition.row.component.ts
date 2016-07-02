@@ -18,7 +18,8 @@ import {DictionaryService} from "../../service/dictionary.service";
         Do not delete empty things!! Please search for a word before deleting
       </div>
       <div class="col-lg-4">
-        <input #inputField class="form-control" type="text" (keydown)="proccesKeyStroke($event)"/>
+        <input #inputField class="form-control" type="text" (keydown)="proccesKeyStroke($event)"
+          placeholder="Enter your word here"/>
       </div>
       <div class="col-lg-7">
         <definition-panel [rowIndex]="rowIndex" [title]="inputField.value"
@@ -44,11 +45,10 @@ export class DefinitionRowComponent implements AfterViewInit{
   private static rowCounter: number = 0;
   private TAB_KEYCODE: number = 9;
   @Output() onTabKey = new EventEmitter<boolean>();
-  definitions: Observable<Response>;
+  definitions: Observable<Response> = null;
   @ViewChild('inputField') inputField: ElementRef;
   image: string = './build/' + require('./trash-icon.png');
   showFailureMessage: boolean = false;
-  private internalCounter: number;
   definitionsStream: Subject<Observable<Response>> = new Subject<Observable<Response>>();
 
   constructor(private _dictionaryService: DictionaryService, private _renderer: Renderer,
@@ -62,21 +62,12 @@ export class DefinitionRowComponent implements AfterViewInit{
 
   proccesKeyStroke(event){
     if(this._isTabKey(event.keyCode)){
-      this.onTabKey.emit(true);
+      if(this.definitions === null){
+        this.onTabKey.emit(true);
+        DefinitionRowComponent.rowCounter++;
+      }
       this.definitions = this._getDefinition(this.inputField.nativeElement.value);
       this.definitionsStream.next(this.definitions);
-      this.internalCounter = DefinitionRowComponent.rowCounter;
-      this.definitions.subscribe((res) => {
-        let definitions = res.map(response => response.senses)
-          .map(senses => senses[0].definition);
-        let payload: Quizletterm = {
-          id: this.internalCounter,
-          word: this.inputField.nativeElement.value,
-          definitions: definitions
-        }
-        this._store.dispatch({type: StoreActions.ADD_QUIZLETTERM.toString(), payload});
-      });
-      DefinitionRowComponent.rowCounter++;
     }
   }
 
@@ -96,7 +87,7 @@ export class DefinitionRowComponent implements AfterViewInit{
       this._row.nativeElement.hidden = true;
       this._store.dispatch({
         type: StoreActions.DELETE_QUIZLETTERM.toString(),
-        payload: this.internalCounter
+        payload: this.rowIndex
       });
     }
   }

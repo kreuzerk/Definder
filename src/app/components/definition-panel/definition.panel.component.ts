@@ -42,6 +42,7 @@ export class DefinitionPanelComponent implements AfterViewInit{
   private _internalDefinitions: any;
   private isModeOn: boolean;
   showFailureMessage: boolean = false;
+  private isPanelTouched: boolean = false;
 
   image: string = 'build/' + require('./trash-icon.png');
 
@@ -57,14 +58,38 @@ export class DefinitionPanelComponent implements AfterViewInit{
       defObservable.subscribe(definitions => {
         this.definitions = definitions;
         this._internalDefinitions = definitions;
+        if(!this.isPanelTouched){
+          this._addDefinitionsToStore(definitions);
+        }
+        else{
+          this._updateDefinition();
+        }
         this._filterDefinitions();
-      },
+        }
+      ,
       (error) => {
         this.showFailureMessage = true;
         this._showFailuerForTime();
+        }
+      )}
+    )
+  }
+
+  private _handleError(error): void{
+    this.showFailureMessage = true;
+    this._showFailuerForTime();
+  }
+
+  private _addDefinitionsToStore(definitions: Array<any>): void{
+    this.isPanelTouched = true;
+    let mappedDefinitions = definitions.map(response => response.senses)
+        .map(senses => senses[0].definition);
+      let payload: Quizletterm = {
+        id: this.rowIndex,
+        word: this.title,
+        definitions: mappedDefinitions
       }
-    );
-    })
+      this._store.dispatch({type: StoreActions.ADD_QUIZLETTERM.toString(), payload});
   }
 
   private _showFailuerForTime(): void {
