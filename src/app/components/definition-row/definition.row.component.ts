@@ -45,7 +45,7 @@ export class DefinitionRowComponent implements AfterViewInit{
   private static rowCounter: number = 0;
   private TAB_KEYCODE: number = 9;
   @Output() onTabKey = new EventEmitter<boolean>();
-  definitions: Observable<Response>;
+  definitions: Observable<Response> = null;
   @ViewChild('inputField') inputField: ElementRef;
   image: string = './build/' + require('./trash-icon.png');
   showFailureMessage: boolean = false;
@@ -63,7 +63,9 @@ export class DefinitionRowComponent implements AfterViewInit{
 
   proccesKeyStroke(event){
     if(this._isTabKey(event.keyCode)){
-      this.onTabKey.emit(true);
+      if(this.definitions === null){
+        this.onTabKey.emit(true);
+      }
       this.definitions = this._getDefinition(this.inputField.nativeElement.value);
       this.definitionsStream.next(this.definitions);
       DefinitionRowComponent.rowCounter++;
